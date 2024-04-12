@@ -14,7 +14,7 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 |-------------------------------------------------|--------------------------------------------------------|
 | [Fetch video infos by key term(s)](#keyterm_search) | Downloading videos                                 |       
 | [Fetching user information](#get_users_info) | Extracting text from videos (OCR)                         |
-| [Search for videos by term(s)](#get_videos_info) | Downloading sounds of videos                          |
+| [Search for videos by user(s)](#get_videos_info) | Downloading sounds of videos                          |
 | [Collecting comments from videos](#get_video_comments) |                                                 |
 | [Fetching the followers of accounts](#get_followers)  |                                                  |
 | [Fetching accounts followed by a user](#get_following_users) |                                           |
