@@ -1,5 +1,10 @@
 
-
+![Python Version](https://img.shields.io/badge/python-3.7+-blue.svg)
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
+![PyPI Version](https://img.shields.io/pypi/v/ResearchTikPy.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![LinkedIn Badge](https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/julian-hohner-71a93b163/)
+[![X](https://img.shields.io/badge/X-%23000000.svg?style=for-the-badge&logo=X&logoColor=white)](https://twitter.com/J_H_ohner)
 
 
 <p align="middle">
@@ -28,8 +33,6 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 2. Read [TikTok's guide](https://developers.tiktok.com/doc/about-research-api/) about the research API to inform you about restrictions, daily quotas and FAQs.
 3. Feel free to contact me or submit a question in case you encounter bugs or errors!
    
-![LinkedIn Badge](https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/julian-hohner-71a93b163/)
-[![X](https://img.shields.io/badge/X-%23000000.svg?style=for-the-badge&logo=X&logoColor=white)](https://twitter.com/J_H_ohner)
 
 ## Installation
 
