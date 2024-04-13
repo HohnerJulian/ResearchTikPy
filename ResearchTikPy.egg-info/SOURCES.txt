@@ -1,0 +1,7 @@
+README.md
+setup.py
+ResearchTikPy.egg-info/PKG-INFO
+ResearchTikPy.egg-info/SOURCES.txt
+ResearchTikPy.egg-info/dependency_links.txt
+ResearchTikPy.egg-info/requires.txt
+ResearchTikPy.egg-info/top_level.txt
