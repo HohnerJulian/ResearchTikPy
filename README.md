@@ -39,9 +39,11 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 Currently, ResearchTikPy is not available on PyPI, so it needs to be installed directly from the source:
 
 ```bash
-git clone https://github.com/HohnerJulian/ResearchTikPy.git
-cd ResearchTikPy
-pip install .
+# Install
+pip install ResearchTikPy
+
+# Import
+import ResearchTikPy
 ```
 ## Generating access token
 
@@ -53,7 +55,7 @@ Before using ResearchTikPy, you must obtain access credentials (client key and s
 client_key = 'your_client_key'
 client_secet = 'your_client_secret'
 
-access_token = get_access_token(client_krey, client_secret)
+access_token = get_access_token(client_key, client_secret)
 
 # OR paste the credentials within the command
 
