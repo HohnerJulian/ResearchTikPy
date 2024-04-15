@@ -36,7 +36,7 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 
 ## Installation
 
-Currently, ResearchTikPy is not available on PyPI, so it needs to be installed directly from the source:
+Currently, the moste efficient mehtod is to install the package via pip.
 
 ```bash
 # Install
