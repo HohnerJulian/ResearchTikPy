@@ -46,9 +46,9 @@ pip install researchtikpy
 import researchtikpy as rtk
 
 
-# Or import individual modules
+# Or import individual modules: F.e.
 
-from researchtikpy import get_acces_token()  # This way you could leav out the `rtk.` at the beginning of every researchtikpy function.
+from researchtikpy import get_acces_token()  # This way you could leave out the `rtk.` at the beginning of every researchtikpy function.
 ```
 ## Generating access token
 
