@@ -3,7 +3,7 @@
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
 ![PyPI Version](https://img.shields.io/pypi/v/ResearchTikPy.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![LinkedIn Badge](https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/julian-hohner-71a93b163/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/julian-hohner-71a93b163/)
 [![X](https://img.shields.io/badge/X-%23000000.svg?style=for-the-badge&logo=X&logoColor=white)](https://twitter.com/J_H_ohner)
 
 
@@ -15,7 +15,7 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 
 **Features of ResearchTikPy:**
 
-| Includes                                        | Does Not (Yet) Include                                 |
+| Includes                                        | Does Not (Yet) Include (Working on it  =)              |
 |-------------------------------------------------|--------------------------------------------------------|
 | [Fetch video infos by key term(s)](#keyterm_search) | Downloading videos                                 |       
 | [Fetching user information](#get_users_info) | Extracting text from videos (OCR)                         |
@@ -88,7 +88,7 @@ This package features every possible query currently provided by the Researcher 
 Fetches video information by hashtag. 
 
 ```bash
-videos_df = rtk.get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_videos (optional),
+videos_df = rtk.get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_count (optional),
      region_code (optional), music_id (optional), effect_id (optional), max_count (optional),  rate_limit_pause (optional))
 ```
 
@@ -133,7 +133,7 @@ Parameters:
 Fetches all videos & video metadata of an account or accounts and compiles them into a single DataFrame (with account IDs).
 
 ```bash
-videos_df = rtk.get_videos_info(usernames, access_token, fields (optional), start_date(optional), end_date(optional), max_count(optional))
+videos_df = rtk.get_videos_info(usernames, access_token, start_date(optional), end_date(optional), fields (optional), max_count(optional))
 ```
 
 Parameters:
