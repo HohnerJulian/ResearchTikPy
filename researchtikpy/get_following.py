@@ -8,7 +8,7 @@ import requests
 import pandas as pd
 from time import sleep
 
-def get_following_users(usernames_list, access_token, max_count=100, verbose=True):
+def get_following(usernames_list, access_token, max_count=100, verbose=True):
     """
     Fetches accounts that a user follows. Each username in the list is used to fetch accounts they follow.
 

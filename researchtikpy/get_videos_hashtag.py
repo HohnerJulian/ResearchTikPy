@@ -9,7 +9,7 @@ import pandas as pd
 import time
 from datetime import datetime, timedelta
 
-def search_videos_by_hashtag(hashtags, access_token, start_date, end_date, total_max_count, region_code=None, music_id=None, effect_id=None, max_count=100, rate_limit_pause=60):
+def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_count, region_code=None, music_id=None, effect_id=None, max_count=100, rate_limit_pause=60):
     """
     Searches for videos by hashtag with optional filters for region code, music ID, or effect ID, and includes rate limit handling. All available fields are retrieved by default, queries are segmented if the range between start_date and end_date exceeds 30 days.
 
