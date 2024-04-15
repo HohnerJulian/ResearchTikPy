@@ -93,6 +93,16 @@ videos_df = rtk.get_videos_hashtag(hashtags, access_token, start_date, end_date,
      region_code (optional), music_id (optional), effect_id (optional), max_count (optional),  rate_limit_pause (optional))
 ```
 
+Example call
+```bash
+
+access_token = "clt.rasddUatUsHasdnHYV2zGw7aQasdxpYpxNz3zjaMfBksdfxXA7" # Dont share you access_token! 
+hashtags = ["fyp", "FYP"]
+start_date = "20230101"
+end_date = "20240131"
+videos_df = rtk.get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_count = 500)
+```
+
 Parameters: 
 
 * **hashtags**: A list of hashtag(s) to search for, e.g., "FYP" or ["FYP", "FORYOURPAGE"].
