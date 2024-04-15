@@ -36,7 +36,7 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 
 ## Installation
 
-Currently, the most efficient mehtod is to install the package via pip.
+Currently, the moste efficient mehtod is to install the package via pip.
 
 ```bash
 # Install
