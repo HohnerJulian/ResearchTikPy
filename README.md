@@ -15,7 +15,7 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 
 **Features of ResearchTikPy:**
 
-| Includes                                        | Does Not (Yet) Include (Working on it  =) )            |
+| Includes                                        | Does Not (Yet) Include (Working on it  =)              |
 |-------------------------------------------------|--------------------------------------------------------|
 | [Fetch video infos by key term(s)](#keyterm_search) | Downloading videos                                 |       
 | [Fetching user information](#get_users_info) | Extracting text from videos (OCR)                         |
@@ -89,7 +89,7 @@ This package features every possible query currently provided by the Researcher 
 Fetches video information by hashtag. 
 
 ```bash
-videos_df = rtk.get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_videos (optional),
+videos_df = rtk.get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_count (optional),
      region_code (optional), music_id (optional), effect_id (optional), max_count (optional),  rate_limit_pause (optional))
 ```
 
@@ -134,7 +134,7 @@ Parameters:
 Fetches all videos & video metadata of an account or accounts and compiles them into a single DataFrame (with account IDs).
 
 ```bash
-videos_df = rtk.get_videos_info(usernames, access_token, fields (optional), start_date(optional), end_date(optional), max_count(optional))
+videos_df = rtk.get_videos_info(usernames, access_token, start_date(optional), end_date(optional), fields (optional), max_count(optional))
 ```
 
 Parameters:
