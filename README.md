@@ -134,13 +134,13 @@ Parameters:
 <a name="get_users_info"></a>
 ### Function: **get_users_info**
 
-Collect user information. Possible parameters are: 
+Fetches account information for given usernames within the specified date range and compiles them into a single data frame.
 
 ```bash
 user_df = rtk.get_users_info(usernames, access_token, start_date, end_date)
 ```
 
-Fetches account information for given usernames within the specified date range and compiles them into a single DataFrame.
+
 
 Parameters:
 
@@ -154,7 +154,7 @@ Parameters:
 <a name="get_videos_info"></a>
 ### Function: **get_videos_info**
 
-Fetches all videos & video metadata of an account or accounts and compiles them into a single DataFrame (with account IDs).
+Fetches all videos & video metadata of an account or accounts and compiles them into a single data frame (with account IDs).
 
 ```bash
 videos_df = rtk.get_videos_info(usernames, access_token, start_date(optional), end_date(optional), fields (optional), max_count(optional))
@@ -173,7 +173,7 @@ Parameters:
 <a name="get_video_comments"></a>
 ### Function: **get_video_comments**
 
-Fetches comments on video(s) and compiles them into a single DataFrame (with video IDs).
+Fetches comments on video(s) and compiles them into a single data frame (with video IDs).
 
 ```bash
 comments_df = rtk.get_video_comments(videos_df, access_token, fields (optional), max_count (optional), verbose (optional))
@@ -196,7 +196,7 @@ Fetches pinned videos of accounts and compiles them into a single DataFrame.
 pinned_df = rtk.get_pinned_videos(usernames, access_token, fields (optional), max_count (optional), verbose (optional))
 ```
 
-* **usernames**: List of usernames to fetch videos for. Reports no pinned videos if account has none. 
+* **usernames**: List of usernames to fetch videos for. Reports no pinned videos if the account has none. 
 * **access_token**: Authorization token for TikTok Research API.
 * **fields** (optional)
 * **verbose** (optional)
@@ -206,7 +206,7 @@ pinned_df = rtk.get_pinned_videos(usernames, access_token, fields (optional), ma
 <a name="get_liked_videos"></a>
 ### Function: **get_liked_videos**
 
-Fetches metadata of videos accounts have like. Only works if accounts enabled this feature. If an account has not enabled this, the section on his profil pages is keyed out and a lock symbol is placed there. 
+Fetches metadata of videos accounts have like. Only works if accounts enable this feature. If an account has not enabled this, the section on his profil pages is keyed out and a lock symbol is placed there. 
 
 ```bash
 liked_df = rtk.get_liked_videos(usernames, access_token, fields (optional), max_count (optional), verbose (optional))
@@ -223,8 +223,8 @@ Parameters:
 <a name="get_following_users"></a>
 ### Function: **get_following_users**
 
-Fetches followers of accounts and compiles them into a single DataFrame. It is advised to keep the list of usernames short to avoid longer runtimes and to account for the large amount of possible followers!. 
-Compiles them into a single DataFrame with the variable `target_account` indicating the seed account.
+Fetches followers of accounts and compiles them into a single data frame. It is advised to keep the list of usernames short to avoid longer runtimes and account for a large number of possible followers! 
+Compiles them into a single data frame with the variable `target_account` indicating the seed account.
 
 ```bash
 following = rtk.get_following (usernames, access_token, fields (optional), max_count (optional), verbose (optional))
@@ -241,7 +241,7 @@ Parameters:
 <a name="get_followers"></a>
 ### Function: **get_followers**
 
-Fetches followers for multiple users and compiles them into a single DataFrame. It is advised to keep the list of 
+Fetches followers for multiple users and compiles them into a single data frame. It is advised to keep the list of 
 usernames short to avoid longer runtimes OR to use the `total_count` parameter to avoid reaching daily quotas rather quickly.
 
 ```bash
@@ -260,7 +260,7 @@ Parameters:
 
 Please feel free to cite me when using the package: 
 
-Hohner, J. (2024). ResearchPikTy (Python Library). Github Repository: https://github.com/HohnerJulian/ResearchTikPy
+Hohner, J. (2024). ResearchPikTy (Python Library). GitHub Repository: https://github.com/HohnerJulian/ResearchTikPy
 doi:10.13140/RG.2.2.24209.03682
 
 <br>
