@@ -58,9 +58,14 @@ import researchtikpy as rtk
 
 from researchtikpy import get_acces_token()  # This way you could leave out the `rtk.` at the beginning of every researchtikpy function.
 ```
+
 ## Generating access token
 
-Before using ResearchTikPy, you must obtain access credentials (client key and secret) from TikTok's developer platform. Once you have your credentials, you can use the library to generate an access token that you need to reference every time you run a command in this library:
+Before using ResearchTikPy, you must obtain access credentials (client key and secret) from TikTok's developer platform. Navigate to `manage apps` on TikToks developer webpage to find your `client_key` and `client_secret` <p align="middle">
+  <img src="/images/Credentials.png" width="800" />
+</p>
+
+Once you have your credentials, you can use the library to generate an access token that you need to reference every time you run a command in this library:
 
 ```bash
 # It is advised to store your tokens in separate objects or save them in your system's environment to avoid accidental publication of the credentials.
