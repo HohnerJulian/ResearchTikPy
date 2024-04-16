@@ -15,7 +15,9 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 
 **Features of ResearchTikPy:**
 
-| Includes                                        | Does Not (Yet) Include (Working on it  =) )            |
+<div align="center">
+
+| Includes                                        | Does Not (Yet) Include (Working on it =) )             |
 |-------------------------------------------------|--------------------------------------------------------|
 | [Fetch video infos by key term(s)](#keyterm_search) | Downloading videos                                 |       
 | [Fetching user information](#get_users_info) | Extracting text from videos (OCR)                         |
@@ -25,18 +27,24 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 | [Fetching accounts followed by a user](#get_following_users) |                                           |
 | [Fetching videos liked by a user](#get_liked_videos) |                                                   |
 | [Fetching videos pinned by a user](#get_pinned_videos) |                                                 |
+
+</div>
+
 <br><br>
 
-### Word of Caution 
+## What you need to consider before getting started:
 
-1. Splitting your requests into smaller chunks is generally advised to avoid longer fetching times and data loss.
+1. **This package is in active development! Please report bugs & errors, and feel free to suggest additional functions!**
 2. Read [TikTok's guide](https://developers.tiktok.com/doc/about-research-api/) about the research API to inform you about restrictions, daily quotas and FAQs.
-3. Feel free to contact me or submit a question in case you encounter bugs or errors!
+3. Splitting your requests into smaller chunks is generally advised to avoid longer fetching times and data loss.
+4. If you still have problems getting access to the Research TikTok API because TikTok is ghosting you or does not accept your application, raise your voice by reporting your case to this [survey](https://www.soscisurvey.de/DSA40applications/) by the #DSA40 Data Access Collaboratory
+
+
    
 
 ## Installation
 
-Currently, the most efficient mehtod is to install the package via pip.
+Currently, the most efficient method is to install the package via pip.
 
 ```bash
 # Install
@@ -78,8 +86,17 @@ access_token = rtk.get_access_token('your_client_key', 'your_client_secret')
 ```
 
 # Features
-This package features every possible query currently provided by the Researcher API of TikTok. For the full documentation, including a list of variables, see the official [Codebook](https://developers.tiktok.com/doc/research-api-codebook)
 
+<table style="width: 100%; border-collapse: collapse;" border="0">
+  <tr>
+    <td style="width: 50%; border: none;">
+      This package features every possible query currently provided by the Researcher API of TikTok. For the full documentation, including a list of variables, see the official <a href="https://developers.tiktok.com/doc/research-api-codebook">Codebook</a>.
+    </td>
+    <td style="width: 50%; border: none; text-align: center;">
+      <img src="/images/working.png.png" alt="Description" style="width: 100%; max-width: 300px;"/> <!-- Adjust as necessary -->
+    </td>
+  </tr>
+</table>
 
 <br><br>
 
