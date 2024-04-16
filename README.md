@@ -8,7 +8,7 @@
 
 
 <p align="middle">
-  <img src="/images/Package_logo.png" width="400" /> <!-- Adjust width as needed -->
+  <img src="/images/Package_logo-removebg-preview.png" width="400" /> <!-- Adjust width as needed -->
 </p>
 
 ResearchTikPy is a Python library designed to facilitate access to [TikTok's Research API](https://developers.tiktok.com/products/research-api/), providing a simple and intuitive interface for collecting data on videos, users, comments, and more. This library is intended for academic and research purposes, aiming to streamline the data collection process from TikTok without directly interfering with the API.
@@ -86,18 +86,9 @@ access_token = rtk.get_access_token('your_client_key', 'your_client_secret')
 
 # Features
 
-<table style="width: 100%; border-collapse: collapse;" border="0">
-  <tr>
-    <td style="width: 50%; border: none;">
-      This package features every possible query currently provided by the Researcher API of TikTok. For the full documentation, including a list of variables, see the official <a href="https://developers.tiktok.com/doc/research-api-codebook">Codebook</a>.
-    </td>
-    <td style="width: 50%; border: none; text-align: center;">
-      <img src="/images/working.png.png" alt="Description" style="width: 100%; max-width: 300px;"/> <!-- Adjust as necessary -->
-    </td>
-  </tr>
-</table>
+This package features every possible query currently provided by the Researcher API of TikTok. For the full documentation, including a list of variables, see the official [Codebook](https://developers.tiktok.com/doc/research-api-codebook).
 
-<br><br>
+<br>
 
 <a name="keyterm_search"></a>
 ### Function: **Keyterm search**
