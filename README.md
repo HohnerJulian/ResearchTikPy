@@ -8,7 +8,7 @@
 
 
 <p align="middle">
-  <img src="/images/Package_logo-removebg-preview.png" width="400" /> <!-- Adjust width as needed -->
+  <img src="/images/Package_logo-removebg-preview.png" width="400" /> 
 </p>
 
 ResearchTikPy is a Python library designed to facilitate access to [TikTok's Research API](https://developers.tiktok.com/products/research-api/), providing a simple and intuitive interface for collecting data on videos, users, comments, and more. This library is intended for academic and research purposes, aiming to streamline the data collection process from TikTok without directly interfering with the API.
@@ -72,7 +72,7 @@ Once you have your credentials, you can use the library to generate an access to
 # It is advised to store your tokens in separate objects or save them in your system's environment to avoid accidental publication of the credentials.
 
 client_key = 'your_client_key'
-client_secet = 'your_client_secret'
+client_secret = 'your_client_secret'
 
 access_token = rtk.get_access_token(client_key, client_secret)
 
