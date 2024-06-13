@@ -33,6 +33,7 @@ def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_c
     endpoint = "https://open.tiktokapis.com/v2/research/video/query/"
     url_with_fields = f"{endpoint}?fields={fields}"
 
+    assert isinstance(access_token, str), "access_token must be a string!"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {access_token}"

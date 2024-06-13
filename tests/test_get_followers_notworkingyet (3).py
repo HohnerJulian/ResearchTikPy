@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import pandas as pd
-from researchtikpy.src.get_liked_videos import get_liked_videos
+from researchtikpy import get_liked_videos
 
 class TestGetLikedVideos(unittest.TestCase):
 
