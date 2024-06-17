@@ -87,6 +87,11 @@ def get_videos_query(query: dict, access_token: str, start_date: str, end_date: 
                 collected_videos.extend(videos)
             if len(collected_videos) >= total_max_count:
                 break
+        elif response.status_code == 429:
+            print("Rate limit exceeded. Pausing before retrying...")
+            time.sleep(rate_limit_pause)
+        else:
+            raise ValueError(f"status_code={response.status_code}. {response.json()}")
 
         start_date_dt = current_end_date + timedelta(days=1)
 
