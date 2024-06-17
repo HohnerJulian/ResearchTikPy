@@ -9,6 +9,7 @@ import pandas as pd
 import time
 from datetime import datetime, timedelta
 
+
 def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_count, region_code=None, music_id=None, effect_id=None, max_count=100, rate_limit_pause=60):
     """
     Searches for videos by hashtag with optional filters for region code, music ID, or effect ID, and includes rate limit handling. All available fields are retrieved by default, queries are segmented if the range between start_date and end_date exceeds 30 days.
@@ -28,11 +29,43 @@ def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_c
     Returns:
     - A DataFrame containing the videos that match the given criteria.
     """
+    query: dict = _create_query(hashtags, region_code, music_id, effect_id)
+    return get_videos_query(
+        query=query,
+        access_token=access_token,
+        start_date=start_date,
+        end_date=end_date,
+        total_max_count=total_max_count,
+        max_count=max_count,
+        rate_limit_pause=rate_limit_pause
+    )
+
+
+def _create_query(hashtags: list[str], region_code: str, music_id: str, effect_id: str) -> dict:
+    and_conditions = [{"operation": "IN", "field_name": "hashtag_name", "field_values": hashtags}]
+    if region_code:
+        and_conditions.append({"operation": "EQ", "field_name": "region_code", "field_values": [region_code]})
+    if music_id:
+        and_conditions.append({"operation": "EQ", "field_name": "music_id", "field_values": [music_id]})
+    if effect_id:
+        and_conditions.append({"operation": "EQ", "field_name": "effect_id", "field_values": [effect_id]})
+    query = {"and": and_conditions}
+    return query
+
+
+def get_videos_query(query: dict, access_token: str, start_date: str, end_date: str, total_max_count: int, max_count=100, rate_limit_pause=60) -> pd.DataFrame:
+    """
+    Like get_videos_hashtag(), but you can pass a custom `query` object
+    For the `query` parameter, see the TikTok API documentation: https://developers.tiktok.com/doc/research-api-specs-query-videos/
+    For the rest of parameters, see get_videos_hashtag()
+    """
+
     fields = "id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count,music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text"
 
     endpoint = "https://open.tiktokapis.com/v2/research/video/query/"
     url_with_fields = f"{endpoint}?fields={fields}"
 
+    assert isinstance(access_token, str), "access_token must be a string!"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {access_token}"
@@ -46,16 +79,9 @@ def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_c
 
     while start_date_dt < end_date_dt:
         current_end_date = min(start_date_dt + delta, end_date_dt)
-        and_conditions = [{"operation": "IN", "field_name": "hashtag_name", "field_values": hashtags}]
-        if region_code:
-            and_conditions.append({"operation": "EQ", "field_name": "region_code", "field_values": [region_code]})
-        if music_id:
-            and_conditions.append({"operation": "EQ", "field_name": "music_id", "field_values": [music_id]})
-        if effect_id:
-            and_conditions.append({"operation": "EQ", "field_name": "effect_id", "field_values": [effect_id]})
 
         query_body = {
-            "query": {"and": and_conditions},
+            "query": query,
             "start_date": start_date_dt.strftime("%Y%m%d"),
             "end_date": current_end_date.strftime("%Y%m%d"),
             "max_count": max_count
@@ -78,4 +104,3 @@ def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_c
         start_date_dt = current_end_date + timedelta(days=1)
 
     return pd.DataFrame(collected_videos[:total_max_count])
-

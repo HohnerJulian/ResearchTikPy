@@ -1,7 +1,7 @@
 # test_get_following.py
 import unittest
 from unittest.mock import patch, MagicMock
-from researchtikpy.src.get_following import get_following
+from researchtikpy import get_following
 import pandas as pd
 
 class TestGetFollowing(unittest.TestCase):
