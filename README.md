@@ -260,14 +260,14 @@ Parameters:
 
 Please feel free to cite me when using the package: 
 
-Hohner, J. (2024). ResearchPikTy (Python Library). GitHub Repository: https://github.com/HohnerJulian/ResearchTikPy
+Hohner, J. & Ruiz, Thomas (2024). ResearchPikTy (Python Library). GitHub Repository: https://github.com/HohnerJulian/ResearchTikPy
 doi:10.13140/RG.2.2.24209.03682
 
 <br>
 or Bibtex: 
 <br>
 @misc{Hohner2024ResearchTikPy,
-  author = {Hohner, Julian},
+  author = {Hohner, Julian; Ruiz, Tomas},
   title = {{ResearchTikPy: Python Library for TikTok's Research API}},
   year = {2024},
   howpublished = {\url{https://github.com/HohnerJulian/ResearchTikPy}},
