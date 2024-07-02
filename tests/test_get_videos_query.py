@@ -17,3 +17,16 @@ class TestGetVideosQuery(unittest.TestCase):
         )
         assert isinstance(df, pd.DataFrame)
         assert len(df) > 0
+    
+    def test_invalid_query(self):
+        # 'operation' EQ must have one field value
+        invalid_query = {"and": [{"operation": "EQ", "field_name": "keyword", "field_values": ["one", "two"]}]}
+        with self.assertRaises(ValueError):
+            get_videos_query(
+                query=invalid_query,
+                access_token=access_token(),
+                start_date="20240101",
+                end_date="20240102",
+                total_max_count=10,
+                max_count=10
+            )
