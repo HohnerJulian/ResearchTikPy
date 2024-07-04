@@ -260,7 +260,7 @@ Parameters:
 
 Please feel free to cite me when using the package: 
 
-Hohner, J. & Ruiz, Thomas (2024). ResearchPikTy (Python Library). GitHub Repository: https://github.com/HohnerJulian/ResearchTikPy
+Hohner, J. & Ruiz, Tomas (2024). ResearchPikTy (Python Library). GitHub Repository: https://github.com/HohnerJulian/ResearchTikPy
 doi:10.13140/RG.2.2.24209.03682
 
 <br>
