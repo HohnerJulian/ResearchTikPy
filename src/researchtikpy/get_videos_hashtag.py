@@ -107,20 +107,6 @@ def post_query(full_query: dict, access_token: str) -> requests.Response:
     return requests.post(url_with_fields, headers=headers, json=full_query)
 
 
-@dataclass
-class BatchOfVideos:
-    videos: list[dict] | pd.DataFrame
-    search_id: str | None = None
-    cursor: int | None = None
-
-    def is_empty(self) -> bool:
-        return len(self.videos) == 0
-    
-    @classmethod
-    def empty_batch(cls):
-        return cls(videos=[], search_id=None, cursor=0)
-
-
 def iter_response_sequence(query_body: dict, access_token: str) -> Iterator[requests.Response]:
     """
     Creates an iterator that uses the cursor-based pagination to request all videos sequentially.
@@ -155,9 +141,6 @@ def if_needed_log_failures_and_wait(response: requests.Response) -> None:
     else:
         msg = f"API response error: status_code={response.status_code} body={response.json()}"
         raise ValueError(msg)
-
-
-rate_limit_pause = 60
 
 
 def log_backend_failure_and_wait(response, secs: int = 10) -> None:
