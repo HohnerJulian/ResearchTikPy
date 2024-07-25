@@ -130,14 +130,14 @@ def iter_response_sequence(query_body: dict, access_token: str) -> Iterator[requ
             cursor = data["cursor"]
 
 
-def if_needed_log_failures_and_wait(response: requests.Response) -> None:
+def if_needed_log_failures_and_wait(response: requests.Response, secs: int = 10) -> None:
     if response.status_code == 200:
         return
     elif is_uninformative_backend_failure(response):
-        log_backend_failure_and_wait(response)
+        log_backend_failure_and_wait(response, secs=secs)
     elif search_id_was_not_found(response):
         print("The search_id is not found in the beginning, but is found after waiting some seconds.")
-        log_backend_failure_and_wait(response)
+        log_backend_failure_and_wait(response, secs=secs)
     else:
         msg = f"API response error: status_code={response.status_code} body={response.json()}"
         raise ValueError(msg)
