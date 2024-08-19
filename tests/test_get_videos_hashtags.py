@@ -12,8 +12,8 @@ class TestGetVideoHashtag(unittest.TestCase):
             access_token=token,
             start_date="20240101",
             end_date="20240102",
-            total_max_count=10,
-            max_count=10
+            total_max_count=5,
+            max_count=30
         )
         assert isinstance(df, pd.DataFrame)
         assert len(df) > 0
