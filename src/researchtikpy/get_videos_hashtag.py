@@ -160,8 +160,10 @@ def is_uninformative_backend_failure(response) -> bool:
         "Something is wrong. Please try again later.",
         "Something went wrong. Please try again later.",
         "Server Internal Error",
+        "Invalid count or cursor",
     }
-    return response.status_code == 500 and error_msg in err_msgs
+    status_codes = {400, 500}
+    return response.status_code in status_codes and error_msg in err_msgs
 
 
 def error_message(response) -> str:
