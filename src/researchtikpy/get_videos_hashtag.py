@@ -79,7 +79,7 @@ def get_videos_query(query: dict, access_token: str, start_date: str, end_date: 
             "max_count": max_count
         }
 
-        for response in iter_response_sequence(query_body, access_token):
+        for response in iter_responses(query_body, access_token):
             if_needed_log_failures_and_wait(response)
             if response.status_code == 200:
                 videos: list[dict] = response.json()["data"]["videos"]
@@ -107,15 +107,15 @@ def post_query(full_query: dict, access_token: str) -> requests.Response:
     return requests.post(url_with_fields, headers=headers, json=full_query)
 
 
-def iter_response_sequence(query_body: dict, access_token: str) -> Iterator[requests.Response]:
+def iter_responses(query_body: dict, access_token: str) -> Iterator[requests.Response]:
     """
     Creates an iterator that uses the cursor-based pagination to request all videos sequentially.
-    The assumption is that `is_random=False`. Each element yielded is an http response from the API.
+    If query_body['is_random'] is True, the iterator will not use cursor pagination.
+    Each element yielded is an http response from the API.
     """
-    is_random: bool = query_body.get("is_random", False)
-    assert not is_random, "This iterator is NOT for random queries, because those don't need cursor pagination."
     search_id = query_body.get("search_id", None)
     cursor = query_body.get("cursor", 0)
+    is_sequential = not bool(query_body.get("is_random", False))
 
     while True:
         full_query = query_body | dict(search_id=search_id, cursor=cursor)
@@ -123,11 +123,12 @@ def iter_response_sequence(query_body: dict, access_token: str) -> Iterator[requ
         yield response
         if response.status_code == 200:
             data: dict = response.json()["data"]
-            if not data["has_more"]:
-                print("No more content to fetch. has_more=False")
-                return
-            search_id = data["search_id"]
-            cursor = data["cursor"]
+            if is_sequential:
+                if not data["has_more"]:
+                    print("No more content to fetch. has_more=False")
+                    return
+                search_id = data["search_id"]
+                cursor = data["cursor"]
 
 
 def if_needed_log_failures_and_wait(response: requests.Response, secs: int = 10) -> None:
