@@ -5,7 +5,11 @@
 import requests
 import pandas as pd
 
-def get_users_info(usernames, access_token, fields="display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count", verbose=True):
+
+default_fields = "display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count"
+
+
+def get_users_info(usernames, access_token, fields=default_fields, verbose=True):
     """
     Fetches user information for a list of usernames.
 
@@ -18,16 +22,12 @@ def get_users_info(usernames, access_token, fields="display_name,bio_description
     Returns:
     - pd.DataFrame: DataFrame containing user information.
     """
-    endpoint = "https://open.tiktokapis.com/v2/research/user/info/"
-    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
     users_data = []
     session = requests.Session()  # Use session for improved performance
 
     for username in usernames:
-        query_body = {"username": username}
-        params = {'fields': fields}
-        response = session.post(endpoint, headers=headers, json=query_body, params=params)
-        
+        response = fetch_user_info(session, username, access_token, fields)
+
         if verbose:
             print(f"Fetching info for user: {username}")
 
@@ -50,3 +50,18 @@ def get_users_info(usernames, access_token, fields="display_name,bio_description
     
     return users_df
 
+
+def fetch_user_info(
+    session: requests.Session, username: str, access_token: str, fields: str
+) -> requests.Response:
+    query_body = {"username": username}
+    params = {"fields": fields}
+    endpoint = "https://open.tiktokapis.com/v2/research/user/info/"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+    }
+    return session.post(endpoint, headers=headers, json=query_body, params=params)
+
+
+default_fields = "display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count"
