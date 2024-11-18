@@ -3,6 +3,8 @@ from typing import Dict, Literal, Optional, Union
 
 import requests
 
+from researchtikpy import endpoints
+
 
 class AccessToken:
 
@@ -51,7 +53,7 @@ class AccessToken:
             self._access_token_ = self._get_access_token_()
 
     def _get_access_token_(self):
-        endpoint_url = "https://open.tiktokapis.com/v2/oauth/token/"
+        endpoint_url = endpoints.oauth
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         data = {
             "client_key": self.client_key,
