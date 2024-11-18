@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Dict, Literal, Union
+from typing import Dict, Literal, Optional, Union
 
 import requests
 
@@ -26,6 +26,7 @@ class AccessToken:
         self._token_type_: Literal["Bearer"] = "Bearer"
         self._expires_in_: int = 7200
         self._access_token_: str = self._get_access_token_()
+        self._issued_at_: Optional[datetime] = None
 
     def is_expired(self) -> bool:
         """Check if the access token has expired."""
@@ -64,12 +65,22 @@ class AccessToken:
         if response.status_code != 200:
             raise ValueError(f"Failed to obtain access token: {response.text}")
         response_json = response.json()
-        self._access_token_ = response_json.get("access_token")
+        if response_json.get("error"):
+            raise ValueError(f"Failed to obtain access token: {response_json.get('error_description')}")
+        access_token = response_json.get("access_token")
+        if access_token is None:
+            raise ValueError(f"Failed to obtain access token: {response_json}")
+        self._issued_at_ = datetime.now()
         self._expires_in_ = response_json.get("expires_in")
         self._token_type_ = response_json.get("token_type")
 
+        return  access_token
+
     def __str__(self):
         return f"{self._token_type_}: {self.token}, expires at: {self.expires_at}"
+    
+    def __repr__(self):
+        return self.__str__()
 
 
 def validate_access_token_object(access_token: Union[AccessToken, Dict, str]) -> str:
