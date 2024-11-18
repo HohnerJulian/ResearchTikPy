@@ -23,10 +23,10 @@ class AccessToken:
         """
         self.client_key = client_key
         self.client_secret = client_secret
+        self._issued_at_: Optional[datetime] = datetime.now()
         self._token_type_: Literal["Bearer"] = "Bearer"
         self._expires_in_: int = 7200
         self._access_token_: str = self._get_access_token_()
-        self._issued_at_: Optional[datetime] = None
 
     def is_expired(self) -> bool:
         """Check if the access token has expired."""
@@ -35,19 +35,20 @@ class AccessToken:
     @property
     def expires_at(self) -> datetime:
         """Return the datetime when the access token expires."""
-        return datetime.now() + timedelta(seconds=self._expires_in_)
+        return self._issued_at_ + timedelta(seconds=self._expires_in_)
 
     @property
     def token(self) -> str:
         """Return the currently valid access token."""
         if self.is_expired():
+            print("Token expired. Refreshing token.")
             self.refresh()
         return self._access_token_
 
     def refresh(self):
         """Refresh the access token if it has expired."""
         if self.is_expired():
-            self._get_access_token_()
+            self._access_token_ = self._get_access_token_()
 
     def _get_access_token_(self):
         endpoint_url = "https://open.tiktokapis.com/v2/oauth/token/"
