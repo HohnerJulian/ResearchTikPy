@@ -64,7 +64,8 @@ def get_videos_query(query: dict, access_token: str, start_date: str, end_date: 
 
     start_date_dt = datetime.strptime(start_date, "%Y%m%d")
     end_date_dt = datetime.strptime(end_date, "%Y%m%d")
-    assert start_date_dt <= end_date_dt, "start_date must be before or equal end_date!"
+    if start_date_dt > end_date_dt:
+        raise ValueError("start_date must be before or equal end_date!")
     delta = timedelta(days=30)
 
     collected_videos = []
