@@ -4,13 +4,16 @@
 # In[23]:
 
 
+from dataclasses import dataclass
+import re
+from typing import Iterator
 import requests
 import pandas as pd
 import time
 from datetime import datetime, timedelta
 
 
-def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_count, region_code=None, music_id=None, effect_id=None, max_count=100, rate_limit_pause=60):
+def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_count, region_code=None, music_id=None, effect_id=None, max_count=100):
     """
     Searches for videos by hashtag with optional filters for region code, music ID, or effect ID, and includes rate limit handling. All available fields are retrieved by default, queries are segmented if the range between start_date and end_date exceeds 30 days.
 
@@ -37,7 +40,6 @@ def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_c
         end_date=end_date,
         total_max_count=total_max_count,
         max_count=max_count,
-        rate_limit_pause=rate_limit_pause
     )
 
 
@@ -53,26 +55,17 @@ def _create_query(hashtags: list[str], region_code: str, music_id: str, effect_i
     return query
 
 
-def get_videos_query(query: dict, access_token: str, start_date: str, end_date: str, total_max_count: int, max_count=100, rate_limit_pause=60) -> pd.DataFrame:
+def get_videos_query(query: dict, access_token: str, start_date: str, end_date: str, total_max_count: int, max_count=100) -> pd.DataFrame:
     """
     Like get_videos_hashtag(), but you can pass a custom `query` object
     For the `query` parameter, see the TikTok API documentation: https://developers.tiktok.com/doc/research-api-specs-query-videos/
     For the rest of parameters, see get_videos_hashtag()
     """
 
-    fields = "id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count,music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text"
-
-    endpoint = "https://open.tiktokapis.com/v2/research/video/query/"
-    url_with_fields = f"{endpoint}?fields={fields}"
-
-    assert isinstance(access_token, str), "access_token must be a string!"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {access_token}"
-    }
-
     start_date_dt = datetime.strptime(start_date, "%Y%m%d")
     end_date_dt = datetime.strptime(end_date, "%Y%m%d")
+    if start_date_dt > end_date_dt:
+        raise ValueError("start_date must be before or equal end_date!")
     delta = timedelta(days=30)
 
     collected_videos = []
@@ -87,19 +80,94 @@ def get_videos_query(query: dict, access_token: str, start_date: str, end_date: 
             "max_count": max_count
         }
 
-        response = requests.post(url_with_fields, headers=headers, json=query_body)
-        if response.status_code == 200:
-            data = response.json().get("data", {})
-            videos = data.get("videos", [])
-            collected_videos.extend(videos)
-            if not data.get("has_more", False) or len(collected_videos) >= total_max_count:
+        for response in iter_responses(query_body, access_token):
+            if_needed_log_failures_and_wait(response)
+            if response.status_code == 200:
+                videos: list[dict] = response.json()["data"]["videos"]
+                print(f"Received {len(videos)} videos.")
+                collected_videos.extend(videos)
+            if len(collected_videos) >= total_max_count:
                 break
-        elif response.status_code == 429:
-            print("Rate limit exceeded. Pausing before retrying...")
-            time.sleep(rate_limit_pause)
-        else:
-            raise ValueError(f"status_code={response.status_code}. {response.json()}")
 
         start_date_dt = current_end_date + timedelta(days=1)
 
     return pd.DataFrame(collected_videos[:total_max_count])
+
+
+def post_query(full_query: dict, access_token: str) -> requests.Response:
+    """The full query includes e.g. 'max_count', 'search_id' and 'cursor' fields."""
+    assert isinstance(access_token, str), "access_token must be a string!"
+    endpoint = "https://open.tiktokapis.com/v2/research/video/query/"
+    fields = "id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count,music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text"
+    url_with_fields = f"{endpoint}?fields={fields}"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}"
+    }
+    print(f"Calling TikTok API with data={full_query}")
+    return requests.post(url_with_fields, headers=headers, json=full_query)
+
+
+def iter_responses(query_body: dict, access_token: str) -> Iterator[requests.Response]:
+    """
+    Creates an iterator that uses the cursor-based pagination to request all videos sequentially.
+    If query_body['is_random'] is True, the iterator will not use cursor pagination.
+    Each element yielded is an http response from the API.
+    """
+    search_id = query_body.get("search_id", None)
+    cursor = query_body.get("cursor", 0)
+    is_sequential = not bool(query_body.get("is_random", False))
+
+    while True:
+        full_query = query_body | dict(search_id=search_id, cursor=cursor)
+        response = post_query(full_query=full_query, access_token=access_token)
+        yield response
+        if response.status_code == 200:
+            data: dict = response.json()["data"]
+            if is_sequential:
+                if not data["has_more"]:
+                    print("No more content to fetch. has_more=False")
+                    return
+                search_id = data["search_id"]
+                cursor = data["cursor"]
+
+
+def if_needed_log_failures_and_wait(response: requests.Response, secs: int = 10) -> None:
+    if response.status_code == 200:
+        return
+    elif is_uninformative_backend_failure(response):
+        log_backend_failure_and_wait(response, secs=secs)
+    elif search_id_was_not_found(response):
+        print("The search_id is not found in the beginning, but is found after waiting some seconds.")
+        log_backend_failure_and_wait(response, secs=secs)
+    else:
+        msg = f"API response error: status_code={response.status_code} body={response.json()}"
+        raise ValueError(msg)
+
+
+def log_backend_failure_and_wait(response, secs: int = 10) -> None:
+    print(f"Backend failure: status_code={response.status_code} Response={response.json()}")
+    print(f"Pausing {secs}s before retrying...")
+    time.sleep(secs)
+
+
+def is_uninformative_backend_failure(response) -> bool:
+    error_msg: str = error_message(response)
+    err_msgs = {
+        "Something is wrong. Please try again later.",
+        "Something went wrong. Please try again later.",
+        "Server Internal Error",
+        "Invalid count or cursor",
+    }
+    status_codes = {400, 500}
+    return response.status_code in status_codes and error_msg in err_msgs
+
+
+def error_message(response) -> str:
+    return response.json()["error"]["message"]
+
+
+def search_id_was_not_found(response) -> bool:
+    pattern = r"Search Id \d+ is invalid or expired"
+    match = re.match(pattern, error_message(response))
+    return response.status_code == 400 and bool(match)
