@@ -140,14 +140,19 @@ def iter_responses(query_body: dict, access_token: str) -> Iterator[requests.Res
 def if_needed_log_failures_and_wait(response: requests.Response, secs: int = 10) -> None:
     if response.status_code == 200:
         return
+    elif not has_json(response):
+        raise new_api_response_error(response)
     elif is_uninformative_backend_failure(response):
         log_backend_failure_and_wait(response, secs=secs)
     elif search_id_was_not_found(response):
         print("The search_id is not found in the beginning, but is found after waiting some seconds.")
         log_backend_failure_and_wait(response, secs=secs)
     else:
-        msg = f"API response error: status_code={response.status_code} body={response.json()}"
-        raise ValueError(msg)
+        raise new_api_response_error(response)
+
+def new_api_response_error(response):
+    msg = f"API response error: status_code={response.status_code} body={response.text}"
+    return ValueError(msg)
 
 
 def log_backend_failure_and_wait(response, secs: int = 10) -> None:
@@ -157,7 +162,7 @@ def log_backend_failure_and_wait(response, secs: int = 10) -> None:
 
 
 def is_uninformative_backend_failure(response) -> bool:
-    error_msg: str = error_message(response)
+    error_msg: str = json_error_message(response)
     err_msgs = {
         "Something is wrong. Please try again later.",
         "Something went wrong. Please try again later.",
@@ -168,11 +173,19 @@ def is_uninformative_backend_failure(response) -> bool:
     return response.status_code in status_codes and error_msg in err_msgs
 
 
-def error_message(response) -> str:
+def json_error_message(response) -> str:
     return response.json()["error"]["message"]
+
+
+def has_json(response: requests.Response) -> bool:
+    try:
+        response.json()
+        return True
+    except requests.JSONDecodeError:
+        return False
 
 
 def search_id_was_not_found(response) -> bool:
     pattern = r"Search Id \d+ is invalid or expired"
-    match = re.match(pattern, error_message(response))
+    match = re.match(pattern, json_error_message(response))
     return response.status_code == 400 and bool(match)
