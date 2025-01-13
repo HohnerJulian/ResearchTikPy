@@ -1,7 +1,7 @@
 # Example from Docs
 # curl --location 'https://open.tiktokapis.com/v2/research/tts/shop/' \
 # --header 'Content-Type: application/json' \
-# --header 'Authorization: Bearer clt.2.Hl4lozkBGnBSz0VkTWTscSJDOC55TlPmvA4v2hoaEnRPqF1wHCZzspacy9q2YIqyglTFG6h4k3Ux2oljH-fc8g*3' \
+# --header 'Authorization: Bearer <token>' \
 # --data '{
 #     "shop_name": "Free Soul",
 #     "fields":"shop_name,shop_rating,shop_review_count,item_sold_count,shop_id,shop_performance_value",
@@ -23,7 +23,7 @@ def get_shop_info(shop_name: str, access_token: str) -> requests.Response:
 
 # curl --location 'https://open.tiktokapis.com/v2/research/tts/product/' \
 # --header 'Content-Type: application/json' \
-# --header 'Authorization: Bearer clt.2.zVnmv7TAr05oei_Z3nU-UQE-4IUhG47YsLHNBSn-blQKDAuMoaWaHJUfg2_3nCfOhfWZVpqu44azZHLQ89zA3g*3' \
+# --header 'Authorization: Bearer <token>' \
 # --data '{
 #     "shop_id": 7495177166735509999,
 #     "fields": "product_id,product_sold_count,product_description,product_price,product_review_count,product_name,product_rating_1_count,product_rating_2_count,product_rating_3_count,product_rating_4_count,product_rating_5_count",
@@ -43,7 +43,7 @@ def get_product_info(shop_id: str, access_token: str) -> requests.Response:
 
 
 # curl --location 'https://open.tiktokapis.com/v2/research/tts/review/' \
-# --header 'Authorization: Bearer clt.2.VGcfKdkZWkjVyzaj0TAU9L7RRsBeDNLLnaY1sjEQ9stAldvbLzMCEj2qlaxll4LprGGzH8YUrjjlHhptefD6Cg*0' \
+# --header 'Authorization: Bearer <token>' \
 # --header 'Content-Type: application/json' \
 # --data '{
 #     "product_id": 1729401755128991215,
