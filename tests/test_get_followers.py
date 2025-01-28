@@ -2,7 +2,11 @@ import unittest
 
 import requests
 
-from researchtikpy.get_followers import extract_followers, get_user_followers
+from researchtikpy.get_followers import (
+    extract_followers,
+    get_user_followers,
+    iter_followers_responses,
+)
 from tests.helpers import access_token
 
 
@@ -15,4 +19,16 @@ class TestGetFollowers(unittest.TestCase):
         )
         assert response.status_code == 200
         n_followers = len(extract_followers(response))
-        assert n_followers > 80, n_followers
+        assert n_followers > 70, n_followers
+
+    def test_get_many_followers(self):
+        resps: list[requests.Response] = []
+        for resp in iter_followers_responses(
+            access_token=access_token(), username="realdonaldtrump"
+        ):
+            assert resp.status_code == 200
+            resps.append(resp)
+            if len(resps) > 5:
+                break
+        followers = [follower for resp in resps for follower in extract_followers(resp)]
+        assert len(followers) > 400

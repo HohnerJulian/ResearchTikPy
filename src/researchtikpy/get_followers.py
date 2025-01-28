@@ -14,7 +14,8 @@
 # This is normal behavior for APIs when handling paginated results close to the limit of a dataset.
 # It however unecessarily uses your daily quota faster than it should. Have to optimize that in the future. 
 
-from typing import TypedDict
+import datetime
+from typing import Iterator, TypedDict
 import requests
 import pandas as pd
 from time import sleep
@@ -85,6 +86,8 @@ def get_user_followers(
     cursor: int = 0,
     max_count: int = 100,
 ) -> requests.Response:
+    date_str = to_date_str(cursor)
+    print(f"Calling get followers endpoint for username='{username}', cursor={cursor} (equivalent to '{date_str}'), max_count={max_count}")
     endpoint = "https://open.tiktokapis.com/v2/research/user/followers/"
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -95,6 +98,10 @@ def get_user_followers(
     return response
 
 
+def to_date_str(x: int) -> str:
+    return datetime.datetime.fromtimestamp(x).strftime("%Y-%m-%d %H:%M:%S")
+
+
 class Username(TypedDict):
     display_name: str
     username: str
@@ -102,3 +109,28 @@ class Username(TypedDict):
 
 def extract_followers(response: requests.Response) -> list[Username]:
     return response.json()["data"]["user_followers"]
+
+
+def iter_followers_responses(access_token: str, username: str) -> Iterator[requests.Response]:
+    """
+    Creates an iterator that uses the cursor-based pagination to request all followers sequentially.
+    Each element yielded is an http response from the API.
+    """
+    session = requests.Session()
+    cursor = 0
+    max_count = 100
+    while True:
+        response = get_user_followers(
+            access_token=access_token,
+            session=session,
+            username=username,
+            cursor=cursor,
+            max_count=max_count,
+        )
+        yield response
+        if response.status_code == 200:
+            data: dict = response.json()["data"]
+            if not data["has_more"]:
+                print("No more content to fetch. has_more=False")
+                return
+            cursor = data["cursor"]
