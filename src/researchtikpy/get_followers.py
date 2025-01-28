@@ -14,6 +14,7 @@
 # This is normal behavior for APIs when handling paginated results close to the limit of a dataset.
 # It however unecessarily uses your daily quota faster than it should. Have to optimize that in the future. 
 
+from typing import TypedDict
 import requests
 import pandas as pd
 from time import sleep
@@ -48,11 +49,7 @@ def get_followers(usernames_list, access_token, max_count=100, total_count=None,
             if total_count is not None:
                 effective_max_count = min(max_count, total_count - retrieved_count)
 
-            endpoint = "https://open.tiktokapis.com/v2/research/user/followers/"
-            headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
-            query_body = {"username": username, "max_count": effective_max_count, "cursor": cursor}
-
-            response = session.post(endpoint, headers=headers, json=query_body)
+            response = get_user_followers(access_token, session, username, cursor, effective_max_count)
             
             if response.status_code == 200:
                 data = response.json().get("data", {})
@@ -80,3 +77,28 @@ def get_followers(usernames_list, access_token, max_count=100, total_count=None,
 
     return all_followers_df
 
+
+def get_user_followers(
+    access_token: str,
+    session: requests.Session,
+    username: str,
+    cursor: int = 0,
+    max_count: int = 100,
+) -> requests.Response:
+    endpoint = "https://open.tiktokapis.com/v2/research/user/followers/"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+    }
+    query_body = {"username": username, "max_count": max_count, "cursor": cursor}
+    response = session.post(endpoint, headers=headers, json=query_body)
+    return response
+
+
+class Username(TypedDict):
+    display_name: str
+    username: str
+
+
+def extract_followers(response: requests.Response) -> list[Username]:
+    return response.json()["data"]["user_followers"]
