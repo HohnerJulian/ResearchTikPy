@@ -4,9 +4,12 @@
 # In[5]:
 
 
+from typing import Iterator
 import requests
 import pandas as pd
 from time import sleep
+
+from .get_followers import Username, to_date_str
 
 def get_following(usernames_list, access_token, max_count=100, verbose=True):
     """
@@ -61,3 +64,39 @@ def get_following(usernames_list, access_token, max_count=100, verbose=True):
 
     return all_following_df
 
+
+def get_user_following(
+    access_token: str, session: requests.Session, username: str, cursor: int = 0
+) -> requests.Response:
+    max_count = 100
+    date_str = to_date_str(cursor)
+    print(
+        f"Calling get following endpoint for username='{username}', cursor={cursor} (equivalent to '{date_str}'), max_count={max_count}"
+    )
+    endpoint = "https://open.tiktokapis.com/v2/research/user/following/"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+    }
+    query_body = {"username": username, "max_count": max_count, "cursor": cursor}
+    return session.post(endpoint, headers=headers, json=query_body)
+
+
+def extract_following(response: requests.Response) -> list[Username]:
+    return response.json()["data"]["user_following"]
+
+
+def iter_following_responses(
+    access_token: str, username: str
+) -> Iterator[requests.Response]:
+    session = requests.Session()
+    cursor = 0
+    while True:
+        response = get_user_following(access_token, session, username, cursor)
+        yield response
+        if response.status_code == 200:
+            data: dict = response.json()["data"]
+            if not data["has_more"]:
+                print("No more content to fetch. has_more=False")
+                return
+            cursor = data["cursor"]
