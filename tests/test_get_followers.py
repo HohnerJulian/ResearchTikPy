@@ -3,6 +3,7 @@ import unittest
 import requests
 
 from researchtikpy.get_followers import (
+    Username,
     extract_followers,
     get_user_followers,
     iter_followers_responses,
@@ -11,7 +12,7 @@ from tests.helpers import access_token
 
 
 class TestGetFollowers(unittest.TestCase):
-    def test_get_users_info(self):
+    def test_get_user_followers(self):
         response: requests.Response = get_user_followers(
             access_token=access_token(),
             session=requests.Session(),
@@ -30,5 +31,7 @@ class TestGetFollowers(unittest.TestCase):
             resps.append(resp)
             if len(resps) > 5:
                 break
-        followers = [follower for resp in resps for follower in extract_followers(resp)]
+        followers: list[Username] = [
+            follower for resp in resps for follower in extract_followers(resp)
+        ]
         assert len(followers) > 400
