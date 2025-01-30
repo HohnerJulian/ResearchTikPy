@@ -23,3 +23,6 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/HohnerJulian/ResearchTikPy"
+
+[tool.pytest.ini_options]
+addopts = "-vv --capture=no"
