@@ -1,9 +1,12 @@
+from pathlib import Path
 import unittest
 
+import pandas as pd
 import requests
 
 from researchtikpy.get_followers import Username
 from researchtikpy.get_following import (
+    dump_users_following,
     extract_following,
     get_user_following,
     iter_following_responses,
@@ -35,3 +38,10 @@ class TestGetFollowing(unittest.TestCase):
             following for resp in resps for following in extract_following(resp)
         ]
         assert len(following) > 200
+
+    def test_dump_users_following(self):
+        usernames = pd.Series(["nba"])
+        tgt_csv = Path("following.csv")
+        dump_users_following(usernames, tgt_csv)
+        assert tgt_csv.exists()
+        tgt_csv.unlink()
