@@ -41,7 +41,7 @@ class TestGetFollowing(unittest.TestCase):
 
     def test_dump_users_following(self):
         usernames = pd.Series(["nba"])
-        tgt_csv = Path("following.csv")
-        dump_users_following(usernames, tgt_csv)
-        assert tgt_csv.exists()
-        tgt_csv.unlink()
+        tgt_file = Path("following.jsonl")
+        dump_users_following(usernames, tgt_file)
+        assert tgt_file.exists()
+        tgt_file.unlink()

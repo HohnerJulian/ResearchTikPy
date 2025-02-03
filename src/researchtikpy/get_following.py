@@ -155,10 +155,10 @@ def mk_following_rows(response: requests.Response) -> pd.DataFrame:
         return df
 
 
-def dump_users_following(usernames: pd.Series, tgt_csv: Path):
-    if tgt_csv.exists():
-        done_usernames = pd.read_csv(tgt_csv)["username"].unique()
-        logger.info("CSV exists. Skipping %d usernames", len(done_usernames))
+def dump_users_following(usernames: pd.Series, tgt_jsonl: Path):
+    if tgt_jsonl.exists():
+        done_usernames = pd.read_json(tgt_jsonl, lines=True)["username"].unique()
+        logger.info("JSONL exists. Skipping %d usernames", len(done_usernames))
         usernames = usernames[~usernames.isin(done_usernames)]
 
     for username in tqdm.tqdm(usernames):
@@ -168,4 +168,4 @@ def dump_users_following(usernames: pd.Series, tgt_csv: Path):
         for response in resp_iter:
             df = mk_following_rows(response)
             df = df.assign(username=username)
-            append_df_to_file(df=df, path=tgt_csv)
+            append_df_to_file(df=df, path=tgt_jsonl, jsonl=True)
