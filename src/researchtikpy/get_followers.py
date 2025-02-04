@@ -13,12 +13,16 @@
 # especially if the remaining number to reach the total is less than your specified max_count.
 # This is normal behavior for APIs when handling paginated results close to the limit of a dataset.
 # It however unecessarily uses your daily quota faster than it should. Have to optimize that in the future. 
-
+from logging import getLogger
 import datetime
 from typing import Iterator, TypedDict
 import requests
 import pandas as pd
 from time import sleep
+
+
+logger = getLogger(__name__)
+
 
 def get_followers(usernames_list, access_token, max_count=100, total_count=None, verbose=True):
     """
@@ -87,7 +91,7 @@ def get_user_followers(
     max_count: int = 100,
 ) -> requests.Response:
     date_str = to_date_str(cursor)
-    print(f"Calling get followers endpoint for username='{username}', cursor={cursor} (equivalent to '{date_str}'), max_count={max_count}")
+    logger.info(f"Calling get followers endpoint for username='{username}', cursor={cursor} (equivalent to '{date_str}'), max_count={max_count}")
     endpoint = "https://open.tiktokapis.com/v2/research/user/followers/"
     headers = {
         "Authorization": f"Bearer {access_token}",
