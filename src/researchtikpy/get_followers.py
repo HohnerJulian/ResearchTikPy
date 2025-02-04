@@ -98,8 +98,7 @@ def get_user_followers(
         "Content-Type": "application/json",
     }
     query_body = {"username": username, "max_count": max_count, "cursor": cursor}
-    response = session.post(endpoint, headers=headers, json=query_body)
-    return response
+    return session.post(endpoint, headers=headers, json=query_body)
 
 
 def to_date_str(x: int) -> str:
