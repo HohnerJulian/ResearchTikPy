@@ -6,7 +6,7 @@ from researchtikpy import get_liked_videos
 
 class TestGetLikedVideos(unittest.TestCase):
 
-    @patch('researchtikpy.src.get_liked_videos.requests.Session')
+    @patch('researchtikpy.get_liked_videos.requests.Session')
     def test_get_liked_videos_success(self, mock_session):
         # Arrange
         liked_videos_data = {
@@ -34,7 +34,7 @@ class TestGetLikedVideos(unittest.TestCase):
         self.assertEqual(len(result_df), 2)
         self.assertEqual(result_df.iloc[0]['id'], '12345')
 
-    @patch('researchtikpy.src.get_liked_videos.requests.Session')
+    @patch('researchtikpy.get_liked_videos.requests.Session')
     def test_get_liked_videos_rate_limit(self, mock_session):
         # Arrange
         mock_response = MagicMock()
