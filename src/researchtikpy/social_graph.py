@@ -14,7 +14,7 @@ from enum import StrEnum, auto
 from logging import getLogger
 from pathlib import Path
 from time import sleep
-from typing import Iterator, List, Literal, TypedDict
+from typing import Iterator, List, TypedDict
 
 import pandas as pd
 import requests
@@ -29,14 +29,15 @@ from .rtk_utilities import append_df_to_file
 logger = getLogger(__name__)
 
 
+
 class Username(TypedDict):
     display_name: str
     username: str
 
 
 class FollowDirection(StrEnum):
-    FOLLOWERS = auto()
-    FOLLOWINGS = auto()
+    FOLLOWER = auto()
+    FOLLOWING = auto()
 
 
 def get_followers(usernames_list, access_token, max_count=100, total_count=None, verbose=True):
@@ -158,7 +159,7 @@ def get_user_followers(
         max_count (int): The maximum number of accounts to fetch per request.
     """
     return get_user_response(
-        FollowDirection.FOLLOWERS,
+        FollowDirection.FOLLOWER,
         access_token=access_token,
         session=session,
         username=username,
@@ -182,7 +183,7 @@ def get_user_following(
         max_count (int): The maximum number of accounts to fetch per request.
     """
     return get_user_response(
-        FollowDirection.FOLLOWINGS,
+        FollowDirection.FOLLOWING,
         access_token=access_token,
         session=session,
         username=username,
@@ -192,10 +193,10 @@ def get_user_following(
 
 
 def get_user_response(
-        mode: Literal["followers", "followings"], access_token: str, session: requests.Session, username: str, cursor: int = 0, max_count: int = 100,
+        mode: FollowDirection, access_token: str, session: requests.Session, username: str, cursor: int = 0, max_count: int = 100,
 ) -> requests.Response:
     date_str = to_date_str(cursor)
-    endpoint = endpoints.followers if mode == FollowDirection.FOLLOWERS else endpoints.followings
+    endpoint = endpoints.followers if mode == FollowDirection.FOLLOWER else endpoints.followings
 
     logger.info(
         f"Calling get_{ mode } endpoint for {username}, cursor={cursor} (equivalent to {date_str}), max_count={max_count}"
@@ -227,14 +228,14 @@ def _extract_user_list(reponse: requests.Response, key: str) -> List[Username]:
 
 
 def iter_user_responses(
-    mode: Literal["followings", "followers"],
+    mode: FollowDirection,
     access_token: str, username: str
 ) -> Iterator[requests.Response]:
     """Creates an iterator that uses the cursor-based pagination to request all followers sequentially.
     Each element yielded is an http response from the API.
 
     Params:
-        mode (Literat["followings", "followers"]): The direction of the social graph to fetch.
+        mode (Literat["following", "follower"]): The direction of the social graph to fetch.
         access_token (str): The access token for the TikTok API.
         username (str): The username to fetch the social graph for.
 
@@ -276,54 +277,33 @@ def iter_followers_responses(access_token: str, username: str) -> Iterator[reque
     Each element yielded is an http response from the API.
 
     Params:
-        mode (Literat["followings", "followers"]): The direction of the social graph to fetch.
         access_token (str): The access token for the TikTok API.
         username (str): The username to fetch the social graph for.
 
     Returns:
         Iterator[requests.Response]: An iterator that yields http responses from the API.
     """
-    session = requests.Session()
-    cursor = 0
-    max_count = 100
-    while True:
-        response = get_user_followers(
-            access_token=access_token,
-            session=session,
-            username=username,
-            cursor=cursor,
-            max_count=max_count,
-        )
-        yield response
-        if response.status_code == 200:
-            data: dict = response.json()["data"]
-            if not data["has_more"]:
-                print("No more content to fetch. has_more=False")
-                return
-            cursor = data["cursor"]
+    yield from iter_user_responses(
+        mode=FollowDirection.FOLLOWER, access_token=access_token, username=username
+    )
 
 
 def iter_following_responses(
     access_token: str, username: str
 ) -> Iterator[requests.Response]:
-    session = requests.Session()
-    cursor = 0
-    while True:
-        response = get_user_following(access_token, session, username, cursor)
-        yield response
-        if is_response_ok(response):
-            data: dict = response.json()["data"]
-            if not data["has_more"]:
-                logger.info("No more content to fetch. has_more=False")
-                return
-            cursor = data["cursor"]
-        else:
-            logger.info(
-                "Problem in response. status_code=%d, error='%s'",
-                response.status_code,
-                response.text,
-            )
-            return
+    """Creates an iterator that uses the cursor-based pagination to request all followers sequentially.
+    Each element yielded is an http response from the API.
+
+    Params:
+        access_token (str): The access token for the TikTok API.
+        username (str): The username to fetch the social graph for.
+
+    Returns:
+        Iterator[requests.Response]: An iterator that yields http responses from the API.
+    """
+    yield from iter_user_responses(
+        mode=FollowDirection.FOLLOWING, access_token=access_token, username=username
+    )
 
 
 def is_response_ok(response: requests.Response) -> bool:
@@ -334,48 +314,55 @@ def is_response_ok(response: requests.Response) -> bool:
     )
 
 
-def is_ok_but_empty(response: requests.Response) -> bool:
+def is_ok_but_empty(response: requests.Response, direction: FollowDirection) -> bool:
+    key = f"user_{direction}s"
     is_ok: bool = is_response_ok(response)
-    return is_ok and "user_following" not in response.json()["data"]
+
+    return is_ok and key not in response.json()["data"]
 
 
-def mk_following_rows(response: requests.Response) -> pd.DataFrame:
-    ok: bool = is_response_ok(response)
+def construct_dataframe(mode: FollowDirection, response: requests.Response) -> pd.DataFrame:
+    ok = is_response_ok(response)
     data = {"status_code": response.status_code, "success": ok}
 
-    if ok and not is_ok_but_empty(response):
+    if ok and not is_ok_but_empty(response, mode):
         data["error"] = ""
-        following: list[Username] = extract_following(response)
-        fdf = pd.DataFrame(following)
+        user_connections: list[Username] = _extract_user_list(mode, response)
+        fdf = pd.DataFrame(user_connections)
         new_colnames = {
-            "username": "following_username",
-            "display_name": "following_display_name",
+            "username": f"{mode}_username",
+            "display_name": f"{mode}_display_name",
         }
         fdf = fdf.rename(columns=new_colnames)
         df = fdf.assign(**data)
+        
         return df
-    else:
-        data["error"] = response.text
-        data["following_username"] = None
-        data["following_display_name"] = None
-        df = pd.DataFrame([data])
-        return df
+    data = {**data, "error": response.text, "username": None, "display_name": None}
+    df = pd.DataFrame([data])
+    
+    return df
 
 
-def dump_users_following(usernames: pd.Series, tgt_jsonl: Path):
+def dump_users_connections(mode: FollowDirection, usernames: pd.Series, tgt_jsonl: Path):
     if tgt_jsonl.exists():
         done_usernames = pd.read_json(tgt_jsonl, lines=True)["username"].unique()
-        logger.info("JSONL exists. Skipping %d usernames", len(done_usernames))
+        
+        logger.info(f"JSONL exists. Skipping {len(done_usernames)} usernames")
+
         usernames = usernames[~usernames.isin(done_usernames)]
 
     for username in tqdm.tqdm(usernames):
-        
-        resp_iter = iter_following_responses(
-            access_token=get_access_token_cached(), username=username
-        )
-
-        for response in resp_iter:
-            df = mk_following_rows(response)
+        for response in iter_user_responses(
+            mode=mode, access_token=get_access_token_cached(), username=username
+        ):
+            df = construct_dataframe(mode, response)
             df = df.assign(username=username)
             append_df_to_file(df=df, path=tgt_jsonl, jsonl=True)
-    
+
+
+def dump_users_following(usernames: pd.Series, tgt_jsonl: Path):
+    dump_users_connections(FollowDirection.FOLLOWING, usernames, tgt_jsonl)
+
+
+def dump_users_follower(usernames: pd.Series, tgt_jsonl: Path):
+    dump_users_connections(FollowDirection.FOLLOWER, usernames, tgt_jsonl)
