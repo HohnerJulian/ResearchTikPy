@@ -1,42 +1,35 @@
-#!/usr/bin/env python
-# coding: utf-8
+"""ResearchTikPy's functions for collecting TikTok's social graph.
 
-# In[8]:
-
-
-
-
-# Note: you might encounter a varying number of followers fetched per request. 
-# This is due to how TikTok's API handles pagination and possibly how it limits data per request.
-# As you approach the total limit of followers you want to fetch (total_count),
-# the API might return fewer followers per request,
-# especially if the remaining number to reach the total is less than your specified max_count.
-# This is normal behavior for APIs when handling paginated results close to the limit of a dataset.
-# It however unecessarily uses your daily quota faster than it should. Have to optimize that in the future. 
-from logging import getLogger
+Note:
+    You might encounter a varying number of followers fetched per request. 
+    This is due to how TikTok's API handles pagination and possibly how it limits data per request.
+    As you approach the total limit of followers you want to fetch (total_count),
+    the API might return fewer followers per request,
+    especially if the remaining number to reach the total is less than your specified max_count.
+    This is normal behavior for APIs when handling paginated results close to the limit of a dataset.
+    It however unecessarily uses your daily quota faster than it should. Have to optimize that in the future. 
+"""
 import datetime
-from typing import Iterator, TypedDict
-import requests
-import pandas as pd
-from time import sleep
-# In[5]:
-
-
 from logging import getLogger
 from pathlib import Path
-from typing import Iterator
-import requests
-import pandas as pd
 from time import sleep
+from typing import Iterator, TypedDict
+
+import pandas as pd
+import requests
 import tqdm
 
 from .get_access_token import get_access_token_cached
-from .rtk_utilities import append_df_to_file
 from .get_videos_hashtag import has_json
+from .rtk_utilities import append_df_to_file
 from .social_graph import Username, to_date_str
 
-
 logger = getLogger(__name__)
+
+
+class Username(TypedDict):
+    display_name: str
+    username: str
 
 
 def get_followers(usernames_list, access_token, max_count=100, total_count=None, verbose=True):
@@ -83,6 +76,8 @@ def get_followers(usernames_list, access_token, max_count=100, total_count=None,
             elif response.status_code == 429:
                 if verbose:
                     print(f"Rate limit exceeded fetching followers for user {username}. Pausing before retrying...")
+
+
 def get_following(usernames_list, access_token, max_count=100, verbose=True):
     """
     Fetches accounts that a user follows. Each username in the list is used to fetch accounts they follow.
@@ -180,13 +175,16 @@ def to_date_str(x: int) -> str:
     return datetime.datetime.fromtimestamp(x).strftime("%Y-%m-%d %H:%M:%S")
 
 
-class Username(TypedDict):
-    display_name: str
-    username: str
-
-
 def extract_followers(response: requests.Response) -> list[Username]:
-    return response.json()["data"]["user_followers"]
+    return _extract_user_list(response, "user_followers")
+
+
+def extract_following(response: requests.Response) -> list[Username]:
+    return _extract_user_list(response, "user_following")
+
+
+def _extract_user_list(reponse: requests.Response, key: str) -> List[Username]:
+    return reponse.json().get("data", {}).get(key)
 
 
 def iter_followers_responses(access_token: str, username: str) -> Iterator[requests.Response]:
@@ -212,8 +210,6 @@ def iter_followers_responses(access_token: str, username: str) -> Iterator[reque
                 print("No more content to fetch. has_more=False")
                 return
             cursor = data["cursor"]
-def extract_following(response: requests.Response) -> list[Username]:
-    return response.json()["data"]["user_following"]
 
 
 def iter_following_responses(
@@ -245,6 +241,7 @@ def is_response_ok(response: requests.Response) -> bool:
         and has_json(response)
         and response.json()["error"]["code"] == "ok"
     )
+
 
 def is_ok_but_empty(response: requests.Response) -> bool:
     is_ok: bool = is_response_ok(response)
@@ -288,3 +285,4 @@ def dump_users_following(usernames: pd.Series, tgt_jsonl: Path):
             df = mk_following_rows(response)
             df = df.assign(username=username)
             append_df_to_file(df=df, path=tgt_jsonl, jsonl=True)
+    
