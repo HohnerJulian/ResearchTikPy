@@ -4,8 +4,7 @@
 # In[20]:
 
 
-import time
-from ast import List
+from typing import List
 from datetime import datetime, timedelta
 
 import pandas as pd
