@@ -3,9 +3,11 @@ import unittest
 
 import pandas as pd
 import requests
+import logging
+import sys
 
-from researchtikpy.get_followers import Username
-from researchtikpy.get_following import (
+from researchtikpy.social_graph import (
+    Username,
     dump_users_following,
     extract_following,
     get_user_following,
