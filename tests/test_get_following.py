@@ -6,7 +6,7 @@ import pandas as pd
 
 class TestGetFollowing(unittest.TestCase):
 
-    @patch('researchtikpy.src.get_following.requests.Session')
+    @patch('researchtikpy.get_following.requests.Session')
     def test_get_following_success(self, mock_session):
         # Arrange
         expected_following_data = {
@@ -34,7 +34,7 @@ class TestGetFollowing(unittest.TestCase):
         self.assertEqual(len(result_df), 2)
         self.assertEqual(list(result_df['username']), ['following1', 'following2'])
 
-    @patch('researchtikpy.src.get_following.requests.Session')
+    @patch('researchtikpy.get_following.requests.Session')
     def test_get_following_rate_limit(self, mock_session):
         # Arrange
         mock_response = MagicMock()
