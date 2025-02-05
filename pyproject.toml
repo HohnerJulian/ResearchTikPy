@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ResearchTikPy"
+version = "0.1.10"
+authors = [
+  { name="Julian Hohner", email="daswaeldchen@gmail.com" },
+]
+description = "Python API wrapper for the TikTok Research API"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "requests",
+    "pandas"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/HohnerJulian/ResearchTikPy"

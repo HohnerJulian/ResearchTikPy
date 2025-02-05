@@ -3,7 +3,7 @@
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
 ![PyPI Version](https://img.shields.io/pypi/v/ResearchTikPy.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![LinkedIn Badge](https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/julian-hohner-71a93b163/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/julian-hohner-71a93b163/)
 [![X](https://img.shields.io/badge/X-%23000000.svg?style=for-the-badge&logo=X&logoColor=white)](https://twitter.com/J_H_ohner)
 
 
@@ -15,7 +15,7 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 
 **Features of ResearchTikPy:**
 
-| Includes                                        | Does Not (Yet) Include                                 |
+| Includes                                        | Does Not (Yet) Include (Working on it  =) )            |
 |-------------------------------------------------|--------------------------------------------------------|
 | [Fetch video infos by key term(s)](#keyterm_search) | Downloading videos                                 |       
 | [Fetching user information](#get_users_info) | Extracting text from videos (OCR)                         |
@@ -36,14 +36,19 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 
 ## Installation
 
-Currently, ResearchTikPy is not available on PyPI, so it needs to be installed directly from the source:
+Currently, the most efficient mehtod is to install the package via pip.
 
 ```bash
 # Install
-pip install ResearchTikPy
+pip install researchtikpy
 
 # Import
-import ResearchTikPy
+import researchtikpy as rtk
+
+
+# Or import individual modules: F.e.
+
+from researchtikpy import get_acces_token()  # This way you could leave out the `rtk.` at the beginning of every researchtikpy function.
 ```
 ## Generating access token
 
@@ -55,11 +60,11 @@ Before using ResearchTikPy, you must obtain access credentials (client key and s
 client_key = 'your_client_key'
 client_secet = 'your_client_secret'
 
-access_token = get_access_token(client_key, client_secret)
+access_token = rtk.get_access_token(client_key, client_secret)
 
 # OR paste the credentials within the command
 
-access_token = get_access_token('your_client_key', 'your_client_secret')
+access_token = rtk.get_access_token('your_client_key', 'your_client_secret')
 
 
 # print(access_token) # Testing, if necessary. It should look something like this:
@@ -83,7 +88,7 @@ This package features every possible query currently provided by the Researcher 
 Fetches video information by hashtag. 
 
 ```bash
-videos_df = search_videos_by_hashtag(hashtags, access_token, start_date, end_date, total_max_videos (optional),
+videos_df = rtk.get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_count (optional),
      region_code (optional), music_id (optional), effect_id (optional), max_count (optional),  rate_limit_pause (optional))
 ```
 
@@ -108,7 +113,7 @@ Parameters:
 Collect user information. Possible parameters are: 
 
 ```bash
-user_df = get_users_info(usernames, access_token, start_date, end_date)
+user_df = rtk.get_users_info(usernames, access_token, start_date, end_date)
 ```
 
 Fetches account information for given usernames within the specified date range and compiles them into a single DataFrame.
@@ -128,7 +133,7 @@ Parameters:
 Fetches all videos & video metadata of an account or accounts and compiles them into a single DataFrame (with account IDs).
 
 ```bash
-videos_df = get_videos_info(usernames, access_token, fields (optional), start_date(optional), end_date(optional), max_count(optional))
+videos_df = rtk.get_videos_info(usernames, access_token, start_date(optional), end_date(optional), fields (optional), max_count(optional))
 ```
 
 Parameters:
@@ -147,7 +152,7 @@ Parameters:
 Fetches comments on video(s) and compiles them into a single DataFrame (with video IDs).
 
 ```bash
-comments_df = get_video_comments(videos_df, access_token, fields (optional), max_count (optional), verbose (optional))
+comments_df = rtk.get_video_comments(videos_df, access_token, fields (optional), max_count (optional), verbose (optional))
 ```
 Parameters:
 * **videos_df**: DataFrame with a column 'id' containing video IDs (f.e. provided by `get_videos_info`).
@@ -164,7 +169,7 @@ Parameters:
 Fetches pinned videos of accounts and compiles them into a single DataFrame.
 
 ```bash
-pinned_df = get_pinned_videos(usernames, access_token, fields (optional), max_count (optional), verbose (optional))
+pinned_df = rtk.get_pinned_videos(usernames, access_token, fields (optional), max_count (optional), verbose (optional))
 ```
 
 * **usernames**: List of usernames to fetch videos for. Reports no pinned videos if account has none. 
@@ -180,7 +185,7 @@ pinned_df = get_pinned_videos(usernames, access_token, fields (optional), max_co
 Fetches metadata of videos accounts have like. Only works if accounts enabled this feature. If an account has not enabled this, the section on his profil pages is keyed out and a lock symbol is placed there. 
 
 ```bash
-liked_df = get_liked_videos(usernames, access_token, fields (optional), max_count (optional), verbose (optional))
+liked_df = rtk.get_liked_videos(usernames, access_token, fields (optional), max_count (optional), verbose (optional))
 ```
 Parameters:
 * **usernames**: List of usernames to fetch videos for. Reports no liked videos if account has none. 
@@ -198,7 +203,7 @@ Fetches followers of accounts and compiles them into a single DataFrame. It is a
 Compiles them into a single DataFrame with the variable `target_account` indicating the seed account.
 
 ```bash
-following = get_following_users (usernames, access_token, fields (optional), max_count (optional), verbose (optional))
+following = rtk.get_following (usernames, access_token, fields (optional), max_count (optional), verbose (optional))
 ```
 Parameters:
 * **usernames**: List of usernames to fetch videos for. Reports no pinned videos if account has none. 
@@ -216,7 +221,7 @@ Fetches followers for multiple users and compiles them into a single DataFrame. 
 usernames short to avoid longer runtimes OR to use the `total_count` parameter to avoid reaching daily quotas rather quickly.
 
 ```bash
-followers = get_followers (usernames, access_token, total_count (optional) fields (optional), max_count (optional), verbose (optional))
+followers = rtk.get_followers (usernames, access_token, total_count (optional) fields (optional), max_count (optional), verbose (optional))
 ```
 
 Parameters:
