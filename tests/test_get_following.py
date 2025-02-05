@@ -3,6 +3,12 @@ import unittest
 
 import pandas as pd
 import requests
+import logging
+import sys
+
+
+logger = logging.getLogger()
+logger.level = logging.DEBUG
 
 from researchtikpy.social_graph import (
     Username,
@@ -16,6 +22,9 @@ from tests.helpers import access_token
 
 class TestGetFollowing(unittest.TestCase):
     def test_get_user_following(self):
+        stream_handler = logging.StreamHandler(sys.stdout)
+        logger.addHandler(stream_handler)
+    
         response: requests.Response = get_user_following(
             access_token=access_token(),
             session=requests.Session(),
@@ -26,6 +35,9 @@ class TestGetFollowing(unittest.TestCase):
         assert n_following > 90, n_following
 
     def test_get_many_following(self):
+        stream_handler = logging.StreamHandler(sys.stdout)
+        logger.addHandler(stream_handler)
+        
         resps: list[requests.Response] = []
         for resp in iter_following_responses(
             access_token=access_token(), username="nba"
