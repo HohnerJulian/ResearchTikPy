@@ -10,19 +10,21 @@ Note:
     It however unecessarily uses your daily quota faster than it should. Have to optimize that in the future. 
 """
 import datetime
+from enum import StrEnum, auto
 from logging import getLogger
 from pathlib import Path
 from time import sleep
-from typing import Iterator, TypedDict
+from typing import Iterator, List, Literal, TypedDict
 
 import pandas as pd
 import requests
 import tqdm
 
+from . import endpoints
+
 from .get_access_token import get_access_token_cached
 from .get_videos_hashtag import has_json
 from .rtk_utilities import append_df_to_file
-from .social_graph import Username, to_date_str
 
 logger = getLogger(__name__)
 
@@ -30,6 +32,11 @@ logger = getLogger(__name__)
 class Username(TypedDict):
     display_name: str
     username: str
+
+
+class FollowDirection(StrEnum):
+    FOLLOWERS = auto()
+    FOLLOWINGS = auto()
 
 
 def get_followers(usernames_list, access_token, max_count=100, total_count=None, verbose=True):
@@ -139,34 +146,66 @@ def get_user_followers(
     cursor: int = 0,
     max_count: int = 100,
 ) -> requests.Response:
-    date_str = to_date_str(cursor)
-    logger.info(f"Calling get followers endpoint for username='{username}', cursor={cursor} (equivalent to '{date_str}'), max_count={max_count}")
-    endpoint = "https://open.tiktokapis.com/v2/research/user/followers/"
-                    print(f"Error fetching following for user {username}: {response.status_code}", response.json())
-                break  # Stop the loop for the current user
+    """Fetches the accounts that follows an user.
 
-        if following_list:
-            following_df = pd.DataFrame(following_list)
-            following_df['target_account'] = username  # Identify the account these followings belong to
-            all_following_df = pd.concat([all_following_df, following_df], ignore_index=True)
-
-    return all_following_df
+    Equivalent to `get_user_response(FollowDirection.FOLLOWERS, ...)`.
+    
+    Params:
+        access_token (str): The access token for the TikTok API.
+        session (requests.Session): The session to use for the request.
+        username (str): The username to fetch the social graph for.
+        cursor (int): The cursor to use for pagination.
+        max_count (int): The maximum number of accounts to fetch per request.
+    """
+    return get_user_response(
+        FollowDirection.FOLLOWERS,
+        access_token=access_token,
+        session=session,
+        username=username,
+        cursor=cursor,
+        max_count=max_count
+    )
 
 
 def get_user_following(
-    access_token: str, session: requests.Session, username: str, cursor: int = 0
+    access_token: str, session: requests.Session, username: str, cursor: int = 0, max_count: int = 100,
 ) -> requests.Response:
-    max_count = 100
-    date_str = to_date_str(cursor)
-    logger.info(
-        "Calling get following endpoint for username='%s', cursor=%d (equivalent to '%s'), max_count=%d",
-        username, cursor, date_str, max_count
+    """Fetches the accounts that follows an user.
+
+    Equivalent to `get_user_response(FollowDirection.FOLLOWINGS, ...)`.
+    
+    Params:
+        access_token (str): The access token for the TikTok API.
+        session (requests.Session): The session to use for the request.
+        username (str): The username to fetch the social graph for.
+        cursor (int): The cursor to use for pagination.
+        max_count (int): The maximum number of accounts to fetch per request.
+    """
+    return get_user_response(
+        FollowDirection.FOLLOWINGS,
+        access_token=access_token,
+        session=session,
+        username=username,
+        cursor=cursor,
+        max_count=max_count
     )
-    endpoint = "https://open.tiktokapis.com/v2/research/user/following/"
+
+
+def get_user_response(
+        mode: Literal["followers", "followings"], access_token: str, session: requests.Session, username: str, cursor: int = 0, max_count: int = 100,
+) -> requests.Response:
+    date_str = to_date_str(cursor)
+    endpoint = endpoints.followers if mode == FollowDirection.FOLLOWERS else endpoints.followings
+
+    logger.info(
+        f"Calling get_{ mode } endpoint for {username}, cursor={cursor} (equivalent to {date_str}), max_count={max_count}"
+    )
+    
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
+
     query_body = {"username": username, "max_count": max_count, "cursor": cursor}
     return session.post(endpoint, headers=headers, json=query_body)
 
@@ -187,10 +226,62 @@ def _extract_user_list(reponse: requests.Response, key: str) -> List[Username]:
     return reponse.json().get("data", {}).get(key)
 
 
-def iter_followers_responses(access_token: str, username: str) -> Iterator[requests.Response]:
-    """
-    Creates an iterator that uses the cursor-based pagination to request all followers sequentially.
+def iter_user_responses(
+    mode: Literal["followings", "followers"],
+    access_token: str, username: str
+) -> Iterator[requests.Response]:
+    """Creates an iterator that uses the cursor-based pagination to request all followers sequentially.
     Each element yielded is an http response from the API.
+
+    Params:
+        mode (Literat["followings", "followers"]): The direction of the social graph to fetch.
+        access_token (str): The access token for the TikTok API.
+        username (str): The username to fetch the social graph for.
+
+    Returns:
+        Iterator[requests.Response]: An iterator that yields http responses from the API.
+    """
+    session = requests.Session()
+    cursor = 0
+    max_count = 100
+    while True:
+        response = get_user_response(
+            mode=mode,
+            access_token=access_token,
+            session=session,
+            username=username,
+            cursor=cursor,
+            max_count=max_count,
+        )
+        
+        yield response
+        
+        if is_response_ok(response):
+            data: dict = response.json()["data"]
+            if not data["has_more"]:
+                logger.info("No more content to fetch. has_more=False")
+                return
+            cursor = data["cursor"]
+        else:
+            logger.info(
+                "Problem in response. status_code=%d, error='%s'",
+                response.status_code,
+                response.text,
+            )
+            return
+
+
+def iter_followers_responses(access_token: str, username: str) -> Iterator[requests.Response]:
+    """Creates an iterator that uses the cursor-based pagination to request all followers sequentially.
+    Each element yielded is an http response from the API.
+
+    Params:
+        mode (Literat["followings", "followers"]): The direction of the social graph to fetch.
+        access_token (str): The access token for the TikTok API.
+        username (str): The username to fetch the social graph for.
+
+    Returns:
+        Iterator[requests.Response]: An iterator that yields http responses from the API.
     """
     session = requests.Session()
     cursor = 0
@@ -278,9 +369,11 @@ def dump_users_following(usernames: pd.Series, tgt_jsonl: Path):
         usernames = usernames[~usernames.isin(done_usernames)]
 
     for username in tqdm.tqdm(usernames):
+        
         resp_iter = iter_following_responses(
             access_token=get_access_token_cached(), username=username
         )
+
         for response in resp_iter:
             df = mk_following_rows(response)
             df = df.assign(username=username)
