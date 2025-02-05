@@ -2,7 +2,7 @@ import unittest
 
 import requests
 
-from researchtikpy.get_followers import (
+from researchtikpy.social_graph import (
     Username,
     extract_followers,
     get_user_followers,
