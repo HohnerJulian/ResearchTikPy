@@ -7,6 +7,7 @@ from researchtikpy import endpoints
 
 
 class AccessToken:
+    """rtkpy access token object."""
 
     def __init__(self, client_key, client_secret):
         """Requests an access token from the TikTok API using client credentials.
@@ -45,7 +46,7 @@ class AccessToken:
         if self.is_expired():
             print("Token expired. Refreshing token.")
             self.refresh()
-        return self._access_token_
+        return f"{self._token_type_} {self._access_token_}"
 
     def refresh(self):
         """Refresh the access token if it has expired."""

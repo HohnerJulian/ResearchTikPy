@@ -5,11 +5,14 @@
 
 
 from datetime import datetime, timedelta
+from typing import List
 import requests
 import pandas as pd
 import time
 
-def get_videos_info(usernames, access_token, start_date, end_date, max_count=100, verbose=True):
+from researchtikpy.utils import AccessToken
+
+def get_videos_info(usernames: List[str], access_token: AccessToken, start_date: str, end_date: str, max_count=100, verbose=True):  # noqa: F821
     """
     Fetches video information for given usernames within the specified date range.
     
@@ -28,7 +31,7 @@ def get_videos_info(usernames, access_token, start_date, end_date, max_count=100
     query_fields = fields.split(',')
     
     endpoint = "https://open.tiktokapis.com/v2/research/video/query/"
-    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+    headers = {"Authorization": access_token.token, "Content-Type": "application/json"}
 
     start_date_dt = datetime.strptime(start_date, "%Y%m%d")
     end_date_dt = datetime.strptime(end_date, "%Y%m%d")

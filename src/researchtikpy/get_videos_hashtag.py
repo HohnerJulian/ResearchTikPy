@@ -12,6 +12,8 @@ import pandas as pd
 import time
 from datetime import datetime, timedelta
 
+from researchtikpy.utils import AccessToken
+
 
 def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_count, region_code=None, music_id=None, effect_id=None, max_count=100):
     """
@@ -55,7 +57,7 @@ def _create_query(hashtags: list[str], region_code: str, music_id: str, effect_i
     return query
 
 
-def get_videos_query(query: dict, access_token: str, start_date: str, end_date: str, total_max_count: int, max_count=100) -> pd.DataFrame:
+def get_videos_query(query: dict, access_token: AccessToken, start_date: str, end_date: str, total_max_count: int, max_count=100) -> pd.DataFrame:
     """
     Like get_videos_hashtag(), but you can pass a custom `query` object
     For the `query` parameter, see the TikTok API documentation: https://developers.tiktok.com/doc/research-api-specs-query-videos/
@@ -94,21 +96,22 @@ def get_videos_query(query: dict, access_token: str, start_date: str, end_date: 
     return pd.DataFrame(collected_videos[:total_max_count])
 
 
-def post_query(full_query: dict, access_token: str) -> requests.Response:
+def post_query(full_query: dict, access_token: AccessToken) -> requests.Response:
     """The full query includes e.g. 'max_count', 'search_id' and 'cursor' fields."""
-    assert isinstance(access_token, str), "access_token must be a string!"
+    if not isinstance(access_token, AccessToken):
+        raise ValueError("access_token must be an AccessToken!")
     endpoint = "https://open.tiktokapis.com/v2/research/video/query/"
     fields = "id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count,music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text"
     url_with_fields = f"{endpoint}?fields={fields}"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {access_token}"
+        "Authorization": access_token.token}
     }
     print(f"Calling TikTok API with data={full_query}")
     return requests.post(url_with_fields, headers=headers, json=full_query)
 
 
-def iter_responses(query_body: dict, access_token: str) -> Iterator[requests.Response]:
+def iter_responses(query_body: dict, access_token: AccessToken) -> Iterator[requests.Response]:
     """
     Creates an iterator that uses the cursor-based pagination to request all videos sequentially.
     If query_body['is_random'] is True, the iterator will not use cursor pagination.

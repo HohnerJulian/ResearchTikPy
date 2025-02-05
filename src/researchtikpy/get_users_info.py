@@ -5,6 +5,8 @@
 import requests
 import pandas as pd
 
+from researchtikpy.utils import AccessToken
+
 
 default_fields = "display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count"
 
@@ -15,7 +17,7 @@ def get_users_info(usernames, access_token, fields=default_fields, verbose=True)
 
     Parameters:
     - usernames (list): List of TikTok usernames to fetch info for.
-    - access_token (str): Access token for TikTok's API.
+    - access_token (AccessToken): Access token for TikTok's API.
     - fields (str): Comma-separated string of user fields to retrieve. 
     - verbose (bool): If True, prints detailed logs; if False, suppresses most print statements.
 
@@ -52,13 +54,13 @@ def get_users_info(usernames, access_token, fields=default_fields, verbose=True)
 
 
 def fetch_user_info(
-    session: requests.Session, username: str, access_token: str, fields: str
+    session: requests.Session, username: str, access_token: AccessToken, fields: str
 ) -> requests.Response:
     query_body = {"username": username}
     params = {"fields": fields}
     endpoint = "https://open.tiktokapis.com/v2/research/user/info/"
     headers = {
-        "Authorization": f"Bearer {access_token}",
+        "Authorization": access_token.token,
         "Content-Type": "application/json",
     }
     return session.post(endpoint, headers=headers, json=query_body, params=params)

@@ -35,7 +35,7 @@ def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_c
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {access_token}"
+        "Authorization": access_token"
     }
 
     start_date_dt = datetime.strptime(start_date, "%Y%m%d")
