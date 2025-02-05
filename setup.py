@@ -2,7 +2,11 @@ from setuptools import setup, find_packages
 
 setup(
     name="ResearchTikPy",
+<<<<<<< HEAD
     version="0.1.5",
+=======
+    version="0.1.4",
+>>>>>>> 45f59f2 (Update setup.py)
     license="MIT",
     packages=find_packages(),
     install_requires=[
