@@ -4,18 +4,19 @@
 # In[23]:
 
 
-from dataclasses import dataclass
 import re
-from typing import Iterator
-import requests
-import pandas as pd
 import time
 from datetime import datetime, timedelta
+from typing import Iterator, Optional, List
 
+import pandas as pd
+import requests
+
+from researchtikpy import endpoints
 from researchtikpy.utils import AccessToken
 
 
-def get_videos_hashtag(hashtags, access_token, start_date, end_date, total_max_count, region_code=None, music_id=None, effect_id=None, max_count=100):
+def get_videos_hashtag(hashtags: List[str], access_token: AccessToken, start_date: str, end_date: str, total_max_count: int, region_code: Optional[str]=None, music_id: Optional[str]=None, effect_id: Optional[str]=None, max_count: int=100):
     """
     Searches for videos by hashtag with optional filters for region code, music ID, or effect ID, and includes rate limit handling. All available fields are retrieved by default, queries are segmented if the range between start_date and end_date exceeds 30 days.
 
@@ -100,12 +101,12 @@ def post_query(full_query: dict, access_token: AccessToken) -> requests.Response
     """The full query includes e.g. 'max_count', 'search_id' and 'cursor' fields."""
     if not isinstance(access_token, AccessToken):
         raise ValueError("access_token must be an AccessToken!")
-    endpoint = "https://open.tiktokapis.com/v2/research/video/query/"
+    endpoint = endpoints.query
     fields = "id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count,music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text"
     url_with_fields = f"{endpoint}?fields={fields}"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": access_token.token}
+        "Authorization": access_token.token
     }
     print(f"Calling TikTok API with data={full_query}")
     return requests.post(url_with_fields, headers=headers, json=full_query)

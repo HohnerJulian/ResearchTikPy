@@ -14,11 +14,16 @@
 # This is normal behavior for APIs when handling paginated results close to the limit of a dataset.
 # It however unecessarily uses your daily quota faster than it should. Have to optimize that in the future. 
 
-import requests
-import pandas as pd
 from time import sleep
+from typing import List, Optional
 
-def get_followers(usernames_list, access_token, max_count=100, total_count=None, verbose=True):
+import pandas as pd
+import requests
+
+from researchtikpy.utils import AccessToken
+
+
+def get_followers(usernames_list: List[str], access_token: AccessToken, max_count: int=100, total_count: Optional[int]=None, verbose: bool=True):
     """
     Fetches followers for multiple users and compiles them into a single DataFrame. It is advised to keep the list of 
     usernames short to avoid longer runtimes.
@@ -49,7 +54,7 @@ def get_followers(usernames_list, access_token, max_count=100, total_count=None,
                 effective_max_count = min(max_count, total_count - retrieved_count)
 
             endpoint = "https://open.tiktokapis.com/v2/research/user/followers/"
-            headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+            headers = {"Authorization": access_token.token, "Content-Type": "application/json"}
             query_body = {"username": username, "max_count": effective_max_count, "cursor": cursor}
 
             response = session.post(endpoint, headers=headers, json=query_body)

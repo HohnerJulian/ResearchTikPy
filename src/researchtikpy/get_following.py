@@ -4,11 +4,16 @@
 # In[5]:
 
 
-import requests
-import pandas as pd
 from time import sleep
+from typing import List
 
-def get_following(usernames_list, access_token, max_count=100, verbose=True):
+import pandas as pd
+import requests
+
+from researchtikpy.utils import AccessToken
+
+
+def get_following(usernames_list: List[str], access_token: AccessToken, max_count: int=100, verbose: bool=True):
     """
     Fetches accounts that a user follows. Each username in the list is used to fetch accounts they follow.
 
@@ -31,7 +36,7 @@ def get_following(usernames_list, access_token, max_count=100, verbose=True):
 
         while has_more:
             endpoint = "https://open.tiktokapis.com/v2/research/user/following/"
-            headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+            headers = {"Authorization": access_token.token, "Content-Type": "application/json"}
             query_body = {"username": username, "max_count": max_count, "cursor": cursor}
 
             response = session.post(endpoint, headers=headers, json=query_body)

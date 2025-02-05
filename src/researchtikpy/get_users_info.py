@@ -2,16 +2,17 @@
 # coding: utf-8
 
 # In[1]:
-import requests
+from typing import List
+
 import pandas as pd
 
+from researchtikpy import endpoints
 from researchtikpy.utils import AccessToken
-
 
 default_fields = "display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count"
 
 
-def get_users_info(usernames, access_token, fields=default_fields, verbose=True):
+def get_users_info(usernames: List[str], access_token: AccessToken, fields: str=default_fields, verbose: bool=True):
     """
     Fetches user information for a list of usernames.
 
@@ -58,12 +59,9 @@ def fetch_user_info(
 ) -> requests.Response:
     query_body = {"username": username}
     params = {"fields": fields}
-    endpoint = "https://open.tiktokapis.com/v2/research/user/info/"
+    endpoint = endpoints.user_info
     headers = {
         "Authorization": access_token.token,
         "Content-Type": "application/json",
     }
     return session.post(endpoint, headers=headers, json=query_body, params=params)
-
-
-default_fields = "display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count"
