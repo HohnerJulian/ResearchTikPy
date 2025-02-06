@@ -3,7 +3,7 @@
 
 # In[1]:
 from typing import List
-
+import requests
 import pandas as pd
 
 from researchtikpy import endpoints
