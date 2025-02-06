@@ -303,12 +303,6 @@ class Condition:
     operation: Operators
     field_values: List[str]
 
-    def __post_init__(self):
-        if self.operation == "EQ" and len(self.field_values) != 1:
-            raise ValueError("EQ operation must have one field value")
-        if self.operation == "IN" and self.field_name == "username" and len(self.field_values) >= 100:
-            raise ValueError("IN operation on username must have less than equal 100 field values")
-
 
 @dataclass(config=ConfigDict(alias_generator=lambda x: x.removesuffix("_"), populate_by_name = True))
 class Query:
