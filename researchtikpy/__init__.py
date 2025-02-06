@@ -7,8 +7,10 @@ from .get_users_info import get_users_info
 from .get_video_comments import get_video_comments
 from .get_videos_hashtag import get_videos_hashtag, get_videos_query
 from .get_videos_info import get_videos_info
+from .utils import AccessToken
 
 __all__ = [
+    'AccessToken',
     'get_access_token',
     'get_followers',
     'get_following',

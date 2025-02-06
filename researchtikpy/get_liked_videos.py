@@ -4,11 +4,17 @@
 # In[4]:
 
 
-import requests
-import pandas as pd
 from time import sleep
+from typing import List
 
-def get_liked_videos(usernames, access_token, fields="id,video_description,create_time,username,like_count,comment_count,share_count,view_count,hashtag_names", max_count=100, verbose=True):
+import pandas as pd
+import requests
+
+from researchtikpy import endpoints
+from researchtikpy.utils import AccessToken
+
+
+def get_liked_videos(usernames: List[str], access_token: AccessToken, fields: str="id,video_description,create_time,username,like_count,comment_count,share_count,view_count,hashtag_names", max_count: int=100, verbose: bool=True):
     """
     Fetches liked videos for multiple usernames and compiles them into a single DataFrame.
     
@@ -22,8 +28,8 @@ def get_liked_videos(usernames, access_token, fields="id,video_description,creat
     Returns:
     - pd.DataFrame: DataFrame containing all liked videos from the provided usernames.
     """
-    endpoint = "https://open.tiktokapis.com/v2/research/user/liked_videos/"
-    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+    endpoint = endpoints.liked_videos
+    headers = {"Authorization": access_token.token, "Content-Type": "application/json"}
     liked_videos_df = pd.DataFrame()
     session = requests.Session()  # Use session for improved performance
 

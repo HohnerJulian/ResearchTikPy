@@ -7,7 +7,8 @@ import pandas as pd
 class TestGetFollowing(unittest.TestCase):
 
     @patch('researchtikpy.get_following.requests.Session')
-    def test_get_following_success(self, mock_session):
+    @patch('researchtikpy.AccessToken')
+    def test_get_following_success(self, mock_session, mock_token):
         # Arrange
         expected_following_data = {
             "data": {
@@ -24,10 +25,10 @@ class TestGetFollowing(unittest.TestCase):
         mock_response.json.return_value = expected_following_data
         mock_session.return_value.post.return_value = mock_response
         usernames_list = ['testuser']
-        access_token = 'test_access_token'
+        mock_token.token = 'test_access_token'
 
         # Act
-        result_df = get_following(usernames_list, access_token, max_count=2, verbose=False)
+        result_df = get_following(usernames_list, mock_token, max_count=2, verbose=False)
 
         # Assert
         self.assertIsInstance(result_df, pd.DataFrame)
@@ -35,16 +36,17 @@ class TestGetFollowing(unittest.TestCase):
         self.assertEqual(list(result_df['username']), ['following1', 'following2'])
 
     @patch('researchtikpy.get_following.requests.Session')
-    def test_get_following_rate_limit(self, mock_session):
+    @patch('researchtikpy.AccessToken')
+    def test_get_following_rate_limit(self, mock_session, mock_token):
         # Arrange
         mock_response = MagicMock()
         mock_response.status_code = 429  # Simulate rate limit error from the API
         mock_session.return_value.post.return_value = mock_response
         usernames_list = ['testuser']
-        access_token = 'test_access_token'
+        mock_token.token = 'test_access_token'
 
         # Act
-        result_df = get_following(usernames_list, access_token, verbose=False)
+        result_df = get_following(usernames_list, mock_token, verbose=False)
 
         # Assert
         self.assertTrue(result_df.empty)
