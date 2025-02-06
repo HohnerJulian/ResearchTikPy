@@ -12,6 +12,7 @@ def get_access_token(client_key, client_secret) -> AccessToken:
     Returns:
     - AccessToken: The access token, with its expiry duration, and the token type set.
 
+
     Raises:
     - Exception: If the request to the TikTok API fails or is not successful.
     """
