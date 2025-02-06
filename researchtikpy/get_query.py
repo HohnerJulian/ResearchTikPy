@@ -122,7 +122,9 @@ def get_videos_query(
 
         if response.status_code == 200:
             videos: list[dict] = response.json()["data"]["videos"]
-            print(f"Received {len(videos)} videos.")
+
+            logger.info(f"Received {len(videos)} videos.")
+
             collected_videos.extend(videos)
 
         if len(collected_videos) >= total_max_count:
@@ -164,7 +166,7 @@ def iter_responses(query_body: dict, access_token: str) -> Iterator[requests.Res
             data: dict = response.json()["data"]
             if is_sequential:
                 if not data["has_more"]:
-                    print("No more content to fetch. has_more=False")
+                    logger.info("No more content to fetch. has_more=False")
                     return
                 search_id = data["search_id"]
                 cursor = data["cursor"]
@@ -180,7 +182,7 @@ def if_needed_log_failures_and_wait(
     elif is_uninformative_backend_failure(response):
         log_backend_failure_and_wait(response, secs=secs)
     elif search_id_was_not_found(response):
-        print(
+        logger.warning(
             "The search_id is not found in the beginning, but is found after waiting some seconds."
         )
         log_backend_failure_and_wait(response, secs=secs)
@@ -194,10 +196,10 @@ def new_api_response_error(response):
 
 
 def log_backend_failure_and_wait(response, secs: int = 10) -> None:
-    print(
-        f"Backend failure: status_code={response.status_code} Response={response.json()}"
+    logger.warning(
+        f"Backend failure: status_code={response.status_code} Response={response.json()}\n"
+        f"Pausing {secs}s before retrying..."
     )
-    print(f"Pausing {secs}s before retrying...")
     time.sleep(secs)
 
 
