@@ -118,6 +118,20 @@ def get_videos_query(
 
     Returns:
     - A DataFrame containing the videos that match the given criteria.
+
+    Example:
+    ```
+    query = Query(
+        or_=[
+            Condition(Fields.username, Operators.equals, ["username1", "username2"])
+        ]
+    )
+    access_token = AccessToken("your_client_key", "your_client_secret")
+    start_date = "20220101"
+    end_date = "20220131"
+    total_max_count = 1000
+    data = get_videos_query(query, access_token, start_date, end_date, total_max_count)
+    ```
     """
 
     start_date_dt = datetime.strptime(start_date, "%Y%m%d")
