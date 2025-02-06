@@ -4,6 +4,7 @@ from typing import List
 from pydantic import ConfigDict, RootModel
 from pydantic.dataclasses import dataclass
 
+
 class VideoLengths(StrEnum):
     """Video lengths"""
     SHORT = "SHORT"
@@ -260,13 +261,14 @@ class RegionCodes(StrEnum):
     TF = "TF"
     RU = "RU"
 
+
 class Fields(StrEnum):
     """Fields to query"""
     create_date = "create_date"
     username = "username"
     region_code = "region_code"
     video_id = "video_id"
-    hashtag_name = "hashtag"
+    hashtag_name = "hashtag_name"
     keyword = "keyword"
     music_id = "music_id"
     effect_id = "effect_id"
@@ -308,7 +310,7 @@ class Condition:
             raise ValueError("IN operation on username must have less than equal 100 field values")
 
 
-@dataclass(config=ConfigDict(alias_generator=lambda x: x.removesuffix("_")))
+@dataclass(config=ConfigDict(alias_generator=lambda x: x.removesuffix("_"), populate_by_name = True))
 class Query:
     """TikTok Research API Query
 
