@@ -93,6 +93,16 @@ def get_followers(
                     print(
                         f"Rate limit exceeded fetching followers for user {username}. Pausing before retrying..."
                     )
+        if followers_list:
+            followers_df = pd.DataFrame(followers_list)
+            followers_df["target_account"] = (
+                username  # Identify the account these followers belong to
+            )
+            all_followers_df = pd.concat(
+                [all_followers_df, followers_df], ignore_index=True
+            )
+
+    return all_followers_df
 
 
 def get_following(usernames_list, access_token, max_count=100, verbose=True):
@@ -157,16 +167,16 @@ def get_following(usernames_list, access_token, max_count=100, verbose=True):
                     )
                 break  # Stop the loop for the current user
 
-        if followers_list:
-            followers_df = pd.DataFrame(followers_list)
-            followers_df["target_account"] = (
+        if following_list:
+            following_df = pd.DataFrame(following_list)
+            following_df["target_account"] = (
                 username  # Identify the account these followers belong to
             )
-            all_followers_df = pd.concat(
-                [all_followers_df, followers_df], ignore_index=True
+            all_following_df = pd.concat(
+                [all_following_df, following_df], ignore_index=True
             )
 
-    return all_followers_df
+    return all_following_df
 
 
 def get_user_followers(
