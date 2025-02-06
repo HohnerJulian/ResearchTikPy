@@ -24,7 +24,10 @@ def get_videos_hashtag(
     max_count=100,
 ):
     """
-    Searches for videos by hashtag with optional filters for region code, music ID, or effect ID, and includes rate limit handling. All available fields are retrieved by default, queries are segmented if the range between start_date and end_date exceeds 30 days.
+    Searches for videos by hashtag with optional filters for region code, music ID,
+    or effect ID, and includes rate limit handling. All available fields are
+    retrieved by default, queries are segmented if the range between
+    start_date and end_date exceeds 30 days.
 
     Parameters:
     - hashtags: A list of hashtags to search for.
@@ -53,25 +56,39 @@ def get_videos_hashtag(
 
 
 def get_videos_info(
-    usernames, access_token, start_date, end_date, max_count=100, verbose=True
+    usernames,
+    access_token,
+    start_date,
+    end_date,
+    max_count=100,
+    verbose=False,
 ):
-    pass
+    """Get videos for a list of usernames."""
+    query = Query(
+        or_=[
+            Condition(Fields.username, Operators.equals, [username])
+            for username in usernames
+        ]
+    )
+    return get_videos_query(
+        query=query,
+        access_token=access_token,
+        start_date=start_date,
+        end_date=end_date,
+        max_count=max_count,
+    )
 
 
 def _create_hashtag_query_(
     hashtags: list[str], region_code: str, music_id: str, effect_id: str
 ) -> dict:
-    and_conditions = [
-        Condition(Fields.hashtag_name, Operators.isin, hashtags)
-    ]
+    and_conditions = [Condition(Fields.hashtag_name, Operators.isin, hashtags)]
     if region_code:
         and_conditions.append(
             Condition(Fields.region_code, Operators.equals, [region_code])
-            )
-    if music_id:
-        and_conditions.append(
-            Condition(Fields.music_id, Operators.equals, [music_id])
         )
+    if music_id:
+        and_conditions.append(Condition(Fields.music_id, Operators.equals, [music_id]))
     if effect_id:
         and_conditions.append(
             Condition(Fields.effect_id, Operators.equals, [effect_id])
@@ -87,8 +104,10 @@ def get_videos_query(
     total_max_count: int,
     max_count=100,
 ) -> pd.DataFrame:
-    """Post a query to the TikTok API. For the `query` parameter, see the TikTok API documentation: https://developers.tiktok.com/doc/research-api-specs-query-videos/
-    
+    """Post a query to the TikTok API. For the `query` parameter, see the
+    TikTok API documentation:
+    https://developers.tiktok.com/doc/research-api-specs-query-videos/
+
     Parameters:
     - query: The query to post to the API.
     - access_token: Your valid access token for the TikTok Research API.
@@ -103,6 +122,7 @@ def get_videos_query(
 
     start_date_dt = datetime.strptime(start_date, "%Y%m%d")
     end_date_dt = datetime.strptime(end_date, "%Y%m%d")
+
     if start_date_dt > end_date_dt:
         raise ValueError("start_date must be before or equal end_date!")
 
@@ -136,7 +156,7 @@ def get_videos_query(
 def post_query(full_query: dict, access_token: str) -> requests.Response:
     """The full query includes e.g. 'max_count', 'search_id' and 'cursor' fields."""
     assert isinstance(access_token, str), "access_token must be a string!"
-    
+
     endpoint = "https://open.tiktokapis.com/v2/research/video/query/"
     fields = "id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count,music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text"
     url_with_fields = f"{endpoint}?fields={fields}"
