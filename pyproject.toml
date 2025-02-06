@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Python API wrapper for the TikTok Research API"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10,<4.0"
 dependencies = [
     "requests",
     "pandas"
