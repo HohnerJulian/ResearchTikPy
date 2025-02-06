@@ -22,5 +22,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "isort"
+]
+
 [project.urls]
 Homepage = "https://github.com/HohnerJulian/ResearchTikPy"
