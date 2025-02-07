@@ -23,7 +23,7 @@ import tqdm
 
 from . import endpoints
 from .get_access_token import get_access_token_cached
-from .get_videos_hashtag import has_json
+from .get_query import has_json
 from .rtk_utilities import append_df_to_file
 
 logger = getLogger(__name__)
