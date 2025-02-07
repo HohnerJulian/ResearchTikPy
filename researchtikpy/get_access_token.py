@@ -4,7 +4,14 @@
 # In[1]:
 
 
+import os
 import requests
+from cachetools.func import ttl_cache
+from logging import getLogger
+
+
+logger = getLogger(__name__)
+
 
 def get_access_token(client_key, client_secret):
     """
@@ -40,3 +47,13 @@ def get_access_token(client_key, client_secret):
     else:
         raise Exception(f"Failed to obtain access token: {response.text}")
 
+
+@ttl_cache(ttl=7200 - 1)  # to be safe
+def get_access_token_cached() -> str:
+    client_key = os.environ["TIKTOK_CLIENT_KEY"]
+    client_secret = os.environ["TIKTOK_CLIENT_SECRET"]
+    logger.info("Getting access token...")
+    data: dict = get_access_token(
+        client_key=client_key, client_secret=client_secret
+    )
+    return data["access_token"]
