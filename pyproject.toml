@@ -10,17 +10,24 @@ authors = [
 ]
 description = "Python API wrapper for the TikTok Research API"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10,<4.0"
 dependencies = [
     "requests",
     "pandas",
+    "tqdm"
     "pydantic",
-
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "isort"
 ]
 
 [project.urls]
