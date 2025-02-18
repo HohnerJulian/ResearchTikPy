@@ -5,7 +5,7 @@ from researchtikpy.get_access_token import get_access_token
 
 class TestGetAccessToken(unittest.TestCase):
 
-    @patch('researchtikpy.get_access_token.requests.post')
+    @patch('researchtikpy.utils.requests.post')
     def test_token_retrieval_success(self, mock_post):
         # Arrange
         expected_response = {
@@ -19,12 +19,16 @@ class TestGetAccessToken(unittest.TestCase):
         client_secret = 'test_client_secret'
 
         # Act
-        response = get_access_token(client_key, client_secret)
+        bearer_token = get_access_token(client_key, client_secret)
 
         # Assert
-        self.assertEqual(response, expected_response)
+        assert mock_post.called
+        assert bearer_token.client_key == client_key
+        assert bearer_token.client_secret == client_secret
+        assert bearer_token.token == "Bearer test_access_token"
 
-    @patch('researchtikpy.get_access_token.requests.post')
+
+    @patch('researchtikpy.utils.requests.post')
     def test_token_retrieval_failure(self, mock_post):
         # Arrange
         mock_post.return_value.status_code = 400
