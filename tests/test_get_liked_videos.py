@@ -1,14 +1,13 @@
 # test_get_liked_videos.py
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import patch, MagicMock
 import pandas as pd
 from researchtikpy import get_liked_videos
 
 class TestGetLikedVideos(unittest.TestCase):
 
     @patch('researchtikpy.get_liked_videos.requests.Session')
-    @patch('researchtikpy.AccessToken')
-    def test_get_liked_videos_success(self, mock_session, mock_token):
+    def test_get_liked_videos_success(self, mock_session):
         # Arrange
         liked_videos_data = {
             "data": {
@@ -20,15 +19,15 @@ class TestGetLikedVideos(unittest.TestCase):
                 "cursor": 0
             }
         }
-        mock_response = Mock()
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = liked_videos_data
         mock_session.return_value.post.return_value = mock_response
         usernames = ['testuser']
-        mock_token.token = 'Bearer test_access_token'
+        access_token = 'test_access_token'
 
         # Act
-        result_df = get_liked_videos(usernames, mock_token, verbose=True)
+        result_df = get_liked_videos(usernames, access_token, verbose=False)
 
         # Assert
         self.assertIsInstance(result_df, pd.DataFrame)
@@ -36,17 +35,16 @@ class TestGetLikedVideos(unittest.TestCase):
         self.assertEqual(result_df.iloc[0]['id'], '12345')
 
     @patch('researchtikpy.get_liked_videos.requests.Session')
-    @patch('researchtikpy.AccessToken')
-    def test_get_liked_videos_rate_limit(self, mock_session, mock_token):
+    def test_get_liked_videos_rate_limit(self, mock_session):
         # Arrange
         mock_response = MagicMock()
         mock_response.status_code = 429  # Simulate rate limit error from the API
         mock_session.return_value.post.return_value = mock_response
         usernames = ['testuser']
-        mock_token.token = 'Bearer test_access_token'
+        access_token = 'test_access_token'
 
         # Act
-        result_df = get_liked_videos(usernames, mock_token, verbose=False)
+        result_df = get_liked_videos(usernames, access_token, verbose=False)
 
         # Assert
         self.assertTrue(result_df.empty)

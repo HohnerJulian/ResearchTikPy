@@ -12,8 +12,6 @@ from researchtikpy.social_graph import (
 from tests.helpers import access_token
 
 
-
-
 class TestGetFollowers(unittest.TestCase):
     @patch("researchtikpy.social_graph.requests.Session")
     def test_get_followers_success(self, mock_session):
@@ -33,40 +31,33 @@ class TestGetFollowers(unittest.TestCase):
         mock_response.json.return_value = followers_data
         mock_session().post.return_value = mock_response
 
-        usernames_list = ['testuser']
-        mock_token = Mock()
-        mock_token.token = 'test_token'
+        usernames_list = ["testuser"]
+        access_token = "test_access_token"
 
         # Act
-        result_df = get_followers(usernames_list, mock_token, verbose=False)
+        result_df = get_followers(usernames_list, access_token, verbose=False)
 
         # Assert
         self.assertIsInstance(result_df, pd.DataFrame)
         self.assertEqual(len(result_df), 2)
         self.assertEqual(result_df.iloc[0]["username"], "follower1")
 
-    @unittest.skip("Creates an infinite loop, skipping until fn is fixed.")
-    @patch("researchtikpy.get_followers.sleep")
-    def test_get_followers_rate_limit(self, mock_sleep):
+    @unittest.skip("Skipping test_get_followers_rate_limit")
+    @patch("researchtikpy.social_graph.requests.Session")
+    def test_get_followers_rate_limit(self, mock_session):
         # Arrange
         mock_response = Mock()
         mock_response.status_code = 429  # Simulate a rate limit error from the API
-        mock_sleep.return_value = None
-        mock_token = Mock()
-        mock_token.token = 'test_token'
+        mock_session().post.return_value = mock_response
 
-        usernames_list = ['testuser']
-        
-        with patch("requests.Session") as mock_session:
-            mock_session.return_value.post.return_value = mock_response
-            # Act & Assert
-            # Checking if the DataFrame is empty since the API is rate-limited
-            # Alternatively, could check for a specific exception or log message
-            result_df = get_followers(usernames_list, mock_token, verbose=False)
-            self.assertTrue(result_df.empty)
+        usernames_list = ["testuser"]
+        access_token = "test_access_token"
 
-            assert mock_session().post.called  # Check if the post method was called
-            assert mock_sleep.called  # Check if the sleep function was called
+        # Act & Assert
+        # Checking if the DataFrame is empty since the API is rate-limited
+        # Alternatively, could check for a specific exception or log message
+        result_df = get_followers(usernames_list, access_token, verbose=False)
+        self.assertTrue(result_df.empty)
 
     def test_get_user_followers(self):
         response: requests.Response = get_user_followers(

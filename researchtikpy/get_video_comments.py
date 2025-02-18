@@ -4,22 +4,17 @@
 # In[1]:
 
 
+import requests
+import pandas as pd
 from time import sleep
 
-import pandas as pd
-import requests
-
-from researchtikpy import endpoints
-from researchtikpy.utils import AccessToken
-
-
-def get_video_comments(videos_df: pd.DataFrame, access_token: AccessToken, fields: str="id,video_id,text,like_count,reply_count, create_time, parent_comment_id", max_count: int=100, verbose: bool=True):
+def get_video_comments(videos_df, access_token, fields="id,video_id,text,like_count,reply_count, create_time, parent_comment_id", max_count=100, verbose=True):
     """
     Fetches comments for multiple videos and compiles them into a single DataFrame.
 
     Parameters:
     - videos_df (pd.DataFrame): DataFrame with a column 'id' containing video IDs.
-    - access_token (AccessToken): Access token for TikTok's API.
+    - access_token (str): Access token for TikTok's API.
     - fields (str): Comma-separated string of fields to retrieve for each comment. Defaults to a basic set of fields.
     - max_count (int): Maximum number of comments to retrieve per request (default is 100).
     - verbose (bool): If True (default), prints detailed logs; if False, suppresses most print statements.
@@ -27,8 +22,8 @@ def get_video_comments(videos_df: pd.DataFrame, access_token: AccessToken, field
     Returns:
     - pd.DataFrame: DataFrame containing all comments from the provided videos.
     """
-    endpoint = endpoints.comments
-    headers = {"Authorization": access_token.token, "Content-Type": "application/json"}
+    endpoint = "https://open.tiktokapis.com/v2/research/video/comment/list/"
+    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
     all_comments_df = pd.DataFrame()
     session = requests.Session()  # Use session for improved performance
 
@@ -65,3 +60,4 @@ def get_video_comments(videos_df: pd.DataFrame, access_token: AccessToken, field
                 break  # Stop the loop in case of an error
 
     return all_comments_df
+

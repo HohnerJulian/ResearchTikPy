@@ -8,7 +8,6 @@ from .get_query import get_videos_hashtag, get_videos_query, get_videos_info
 from .query_lang import Fields, Operators, Condition, Query, RegionCodes, VideoLengths
 
 __all__ = [
-    'AccessToken',
     'get_access_token',
     'get_followers',
     'get_following',

@@ -1,4 +1,7 @@
-from researchtikpy.utils import AccessToken
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
 
 
 import os
@@ -19,8 +22,7 @@ def get_access_token(client_key, client_secret):
     - client_secret (str): The client secret provided by TikTok.
 
     Returns:
-    - AccessToken: The access token, with its expiry duration, and the token type set.
-
+    - dict: A dictionary containing the access token, its expiry duration, and the token type.
 
     Raises:
     - Exception: If the request to the TikTok API fails or is not successful.
