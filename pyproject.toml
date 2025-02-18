@@ -14,7 +14,7 @@ requires-python = ">=3.10,<4.0"
 dependencies = [
     "requests",
     "pandas",
-    "tqdm"
+    "tqdm",
     "pydantic",
 ]
 classifiers = [
