@@ -167,7 +167,7 @@ def get_videos_query(
     return pd.DataFrame(collected_videos[:total_max_count])
 
 
-def post_query(full_query: dict, access_token: AccessToken) -> requests.Response:
+def post_query(full_query: dict, access_token: str) -> requests.Response:
     """The full query includes e.g. 'max_count', 'search_id' and 'cursor' fields."""
     assert isinstance(access_token, str), "access_token must be a string!"
 
@@ -182,7 +182,7 @@ def post_query(full_query: dict, access_token: AccessToken) -> requests.Response
     return requests.post(url_with_fields, headers=headers, json=full_query)
 
 
-def iter_responses(query_body: dict, access_token: AccessToken) -> Iterator[requests.Response]:
+def iter_responses(query_body: dict, access_token: str) -> Iterator[requests.Response]:
     """
     Creates an iterator that uses the cursor-based pagination to request all videos sequentially.
     If query_body['is_random'] is True, the iterator will not use cursor pagination.

@@ -4,27 +4,21 @@
 # In[5]:
 
 
-from typing import List
-
-import pandas as pd
 import requests
+import pandas as pd
 
-from researchtikpy import endpoints
-from researchtikpy.utils import AccessToken
-
-
-def get_pinned_videos(usernames: List[str], access_token: AccessToken, fields: str="id,video_description,create_time,username,like_count,comment_count,share_count,view_count,hashtag_names", verbose: bool=True):
+def get_pinned_videos(usernames, access_token, fields="id,video_description,create_time,username,like_count,comment_count,share_count,view_count,hashtag_names", verbose=True):
     """
     Fetches pinned videos for multiple usernames and compiles them into a single DataFrame.
     - usernames (list): List of usernames to fetch pinned videos for.
-    - access_token (AccessToken): Access token for TikTok's API.
+    - access_token (str): Access token for TikTok's API.
     - fields (str): Comma-separated string of fields to retrieve for each pinned video.
     - verbose (bool): If True, print additional logging information.
     Returns:
     - pd.DataFrame: DataFrame containing all pinned videos from the provided usernames.
     """
-    endpoint = endpoints.pinned_videos
-    headers = {"Authorization": access_token.token, "Content-Type": "application/json"}
+    endpoint = "https://open.tiktokapis.com/v2/research/user/pinned_videos/"
+    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
     pinned_videos_df = pd.DataFrame()
     session = requests.Session()  # Use session for improved performance
 

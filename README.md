@@ -54,7 +54,7 @@ import researchtikpy as rtk
 
 # Or import individual modules: F.e.
 
-from researchtikpy import AccessToken  # This way you could leave out the `rtk.` at the beginning of every researchtikpy function.
+from researchtikpy import get_acces_token()  # This way you could leave out the `rtk.` at the beginning of every researchtikpy function.
 ```
 
 ## Generating access token
@@ -65,20 +65,26 @@ Before using ResearchTikPy, you must obtain access credentials (client key and s
 
 Once you have your credentials, you can use the library to generate an access token that you need to reference every time you run a command in this library:
 
-```python
+```bash
 # It is advised to store your tokens in separate objects or save them in your system's environment to avoid accidental publication of the credentials.
 
 client_key = 'your_client_key'
 client_secret = 'your_client_secret'
 
-access_token = rtk.AccessToken(client_key, client_secret)
+access_token = rtk.get_access_token(client_key, client_secret)
 
 # OR paste the credentials within the command
 
-access_token = rtk.AccessToken('your_client_key', 'your_client_secret')
+access_token = rtk.get_access_token('your_client_key', 'your_client_secret')
 
-print(access_token) # Testing, if necessary. It should look something like this:
->>> Bearer: clt.XXXX, expires at: 2023-12-31 23:59:59
+
+# print(access_token) # Testing, if necessary. It should look something like this:
+
+
+#Access Token: clt.Vl7HEasdfdeX28Z0G4wervRoPpY5f3zAGgYmGAAyGkowkYCusgbwqmb4NtNzn2QstXh
+#Expires In: 7200
+#Token Type: Bearer
+
 ```
 
 # Features
@@ -98,10 +104,9 @@ videos_df = rtk.get_videos_hashtag(hashtags, access_token, start_date, end_date,
 ```
 
 Example call
+```bash
 
-```python
-
-access_token = rtk.AccessToken('your_client_key', 'your_client_secret')
+access_token = "clt.rasddUatUsHasdnHYV2zGw7aQasdxpYpxNz3zjaMfBksdfxXA7" # Dont share you access_token! 
 hashtags = ["fyp", "FYP"]
 start_date = "20230101"
 end_date = "20240131"
