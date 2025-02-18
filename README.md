@@ -1,11 +1,7 @@
 
-![Python Version](https://img.shields.io/badge/python-3.7+-blue.svg)
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
+![Python Version](https://img.shields.io/badge/python-3.10%2B-blue?logo=python)
 ![PyPI Version](https://img.shields.io/pypi/v/ResearchTikPy.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/julian-hohner-71a93b163/)
-[![X](https://img.shields.io/badge/X-%23000000.svg?style=for-the-badge&logo=X&logoColor=white)](https://twitter.com/J_H_ohner)
-
 
 <p align="middle">
   <img src="/images/Package_logo-removebg-preview.png" width="400" /> 
@@ -17,16 +13,16 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 
 <div align="center">
 
-| Includes                                        | Does Not Yet Include (Working on it =) )             |
-|-------------------------------------------------|--------------------------------------------------------|
-| [Fetch video infos by key term(s)](#keyterm_search) | Downloading videos                                 |       
-| [Fetch user infos](#get_users_info) | Extracting text from videos (OCR)                         |
-| [Search for videos by user(s)](#get_videos_info) | Downloading sounds of videos                          |
-| [Collect comments from video(s)](#get_video_comments) |                                                 |
-| [Fetch the followers of account(s)](#get_followers)  |                                                  |
-| [Fetch account(s) followed by a user](#get_following_users) |                                           |
-| [Fetch videos liked by a user](#get_liked_videos) |                                                   |
-| [Fetch videos pinned by a user](#get_pinned_videos) |                                                 |
+| Available Functions |
+|-----------------------------|
+| [Fetch video infos by key term(s)](#keyterm_search) |
+| [Fetch user infos](#get_users_info) |
+| [Search for videos by user(s)](#get_videos_info) |
+| [Collect comments from video(s)](#get_video_comments) |
+| [Fetch the followers of account(s)](#get_followers) |
+| [Fetch account(s) followed by a user](#get_following) |
+| [Fetch videos liked by a user](#get_liked_videos) |
+| [Fetch videos pinned by a user](#get_pinned_videos) |
 
 </div>
 
@@ -34,10 +30,12 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 
 ## What you need to consider before getting started:
 
+- **Known Issues**: Please refer to [this issue](https://github.com/HohnerJulian/ResearchTikPy/issues/8) for ongoing discussions and potential fixes.
+
 1. **This package is in active development! Please report bugs & errors, and feel free to suggest additional functions!**
-2. Read [TikTok's guide](https://developers.tiktok.com/doc/about-research-api/) about the research API to inform you about restrictions, daily quotas and FAQs.
+2. Read [TikTok's guide](https://developers.tiktok.com/doc/about-research-api/) about the research API to inform you about restrictions, daily quotas, and FAQs.
 3. Splitting your requests into smaller chunks is generally advised to avoid longer fetching times and data loss.
-4. If you still have problems getting access to the Research TikTok API because TikTok is ghosting you or does not accept your application, raise your voice by reporting your case to this [survey](https://www.soscisurvey.de/DSA40applications/) by the #DSA40 Data Access Collaboratory
+4. The library uses automatic rate-limiting (pausing when TikTok returns HTTP 429 errors), but manual adjustments to wait times may improve performance.
 
 
    
