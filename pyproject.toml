@@ -10,10 +10,12 @@ authors = [
 ]
 description = "Python API wrapper for the TikTok Research API"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10,<4.0"
 dependencies = [
     "requests",
-    "pandas"
+    "pandas",
+    "tqdm"
+    "pydantic",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -21,5 +23,17 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "isort"
+]
+
 [project.urls]
 Homepage = "https://github.com/HohnerJulian/ResearchTikPy"
+
+[tool.pytest.ini_options]
+addopts = "-vv --capture=no"
+log_cli = true
+log_cli_level = "INFO"
