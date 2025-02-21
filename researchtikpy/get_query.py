@@ -213,6 +213,8 @@ def if_needed_log_failures_and_wait(
         return
     elif not has_json(response):
         raise new_api_response_error(response)
+    elif rate_limit_exceeded(response):
+        log_rate_limit_hit_and_wait(response)
     elif is_uninformative_backend_failure(response):
         log_backend_failure_and_wait(response, secs=secs)
     elif search_id_was_not_found(response):
@@ -222,6 +224,22 @@ def if_needed_log_failures_and_wait(
         log_backend_failure_and_wait(response, secs=secs)
     else:
         raise new_api_response_error(response)
+
+
+def rate_limit_exceeded(response) -> bool:
+    """This is different from the daily quota limit."""
+    return (
+        response.status_code == 429
+        and response.json()["error"]["code"] == "rate_limit_exceeded"
+    )
+
+
+def log_rate_limit_hit_and_wait(response) -> None:
+    logger.warning(
+        f"Rate limit hit: status_code={response.status_code} Response={response.json()}\n"
+        f"Pausing 10s before continuing..."
+    )
+    time.sleep(10)
 
 
 def new_api_response_error(response):
