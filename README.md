@@ -48,8 +48,11 @@ ResearchTikPy is a Python library designed to facilitate access to [TikTok's Res
 
 Before using ResearchTikPy, you must obtain access credentials (client key and secret) from TikTok's developer platform. Navigate to `manage apps` on TikToks developer webpage to find your `client_key` and `client_secret` <p align="middle">
   <img src="/images/Credentials_2.png" width="800" />
+
+  
 </p>
-Currently, the most efficient method is to install the package via pip.
+
+**Currently, the most efficient method is to install the package via pip.**
 
 ```bash
 # Install
@@ -238,6 +241,9 @@ usernames short to avoid longer runtimes OR to use the `total_count` parameter t
 ```bash
 followers = rtk.get_followers (usernames, access_token, total_count (optional) fields (optional), max_count (optional), verbose (optional))
 ```
+
+  
+</p>
 
 
 
