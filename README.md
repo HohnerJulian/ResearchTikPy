@@ -135,7 +135,7 @@ from researchtikpy.query_lang import Query, Condition, Operators, Fields
 query = Query(
     and_=[
         Condition(Fields.username, Operators.equals, ["username1"]),
-        Condition(Fields.hashtag_name, Operators.equals, ["hashtag"])  # insert the string without the '#'
+        Condition(Fields.hashtag_name, Operators.equals, ["hashtag"]) 
     ]
 )
 start_date = "20250101"
