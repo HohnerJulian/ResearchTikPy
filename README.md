@@ -121,7 +121,7 @@ This package features every possible query currently provided by the Researcher 
 <a name="get_users_query"></a>
 ### Function: **get_videos_query**
 
-Fetches video information using a custom query in a more flexible way (e.g. combining usernames, hashtags and other conditions) than the specialized features that follow beneath. See [TikTok's guide](https://developers.tiktok.com/doc/about-research-api/) for possible parameters.
+Fetches video information using a custom query in a more flexible way (e.g. combining usernames, hashtags and other conditions) than the specialized features that follow beneath. See [TikTok's guide](https://developers.tiktok.com/doc/about-research-api/) for possible parameters. If you only want to collect data on users use [Fetch user infos](#get_users_info) instead.
 
 ```bash
 videos_df = rtk.get_videos_query(query, access_token, start_date, end_date, total_max_count, max_count=100)
@@ -130,9 +130,19 @@ videos_df = rtk.get_videos_query(query, access_token, start_date, end_date, tota
 Example call
 
 ```bash
-query = Query(or_=[Condition(Fields.username, Operators.equals, ["username1", "username2"])])
+from researchtikpy.query_lang import Query, Condition, Operators, Fields
 
-videos_df = rtk.get_videos_query(query, access_token, "20230101", "20240131", total_max_count=500)
+query = Query(
+    and_=[
+        Condition(Fields.username, Operators.equals, ["username1"]),
+        Condition(Fields.hashtag_name, Operators.equals, ["hashtag"])  # insert the string without the '#'
+    ]
+)
+start_date = "20250101"
+end_date = "20250131"
+total_max_count = 100
+
+data = rtk.get_videos_query(query, access_token, start_date, end_date, total_max_count)
 ```
 
 
