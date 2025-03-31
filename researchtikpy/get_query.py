@@ -107,6 +107,7 @@ def get_videos_query(
     """Post a query to the TikTok API. For the `query` parameter, see the
     TikTok API documentation:
     https://developers.tiktok.com/doc/research-api-specs-query-videos/
+    You can combine usernames and hashtags or any other field parameter using this function.
 
     Parameters:
     - query: The query to post to the API.
@@ -121,16 +122,19 @@ def get_videos_query(
 
     Example:
     ```
+    from researchtikpy.query_lang import Query, Condition, Operators, Fields
+
     query = Query(
-        or_=[
-            Condition(Fields.username, Operators.equals, ["username1", "username2"])
+    and_=[
+        Condition(Fields.username, Operators.equals, ["username1"]),
+        Condition(Fields.hashtag_name, Operators.equals, ["hashtag"])  # insert the string without the '#'
         ]
     )
-    access_token = AccessToken("your_client_key", "your_client_secret")
-    start_date = "20220101"
-    end_date = "20220131"
-    total_max_count = 1000
-    data = get_videos_query(query, access_token, start_date, end_date, total_max_count)
+    start_date = "20250101"
+    end_date = "20250131"
+    total_max_count = 100
+
+    data = rtk.get_videos_query(query, access_token, start_date, end_date, total_max_count)
     ```
     """
 
