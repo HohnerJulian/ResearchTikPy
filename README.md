@@ -186,7 +186,7 @@ user_df = rtk.get_users_info(usernames, access_token, start_date, end_date)
 Fetches all videos & video metadata of an account or accounts and compiles them into a single data frame (with account IDs).
 
 ```bash
-videos_df = rtk.get_videos_info(usernames, access_token, start_date(optional), end_date(optional), fields (optional), max_count(optional))
+videos_df = rtk.get_videos_info(usernames, access_token, start_date, end_date, total_max_count (optional), fields (optional), max_count(optional))
 ```
 
 
