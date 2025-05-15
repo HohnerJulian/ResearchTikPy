@@ -60,6 +60,7 @@ def get_videos_info(
     access_token,
     start_date,
     end_date,
+    total_max_count = None,
     max_count=100,
     verbose=False,
 ):
