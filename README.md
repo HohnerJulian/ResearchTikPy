@@ -106,7 +106,7 @@ This package features every possible query currently provided by the Researcher 
 * **query/hashtag(s)/username(s)/video_id(s)/shop_id(s)/product_id(s)**: A list of strings to search for, e.g., "FYP" or ["FYP", "FORYOURPAGE"].
 * **access_token**: Your valid access token for the TikTok Research API. Stored as a string.
 * **start_date**: The start date for the search. The format should be 'YYYYMMDD'.
-* **end_date**: The end date for the search. The format should be 'YYYYMMDD'.
+* **end_date**: The end date for the search. The format should be 'YYYYMMDD'. Start & end dates should be within a 30-day range. Otherwise, the TikTok Endpoint will report an error.
 * **max_count** (Optional): Maximum units per request is 100 (the default). It is advised to keep it like this or specify a smaller value.
 * **total_max_count** (Optional): The total maximum number of videos to collect. **Keeping this within a manageable range is advised because of the fetching duration and daily quota limit! The default is infinite.** Stored as an integer, e.g., 500.
 * **region_code** (Optional): The region code to filter videos by. See list of [region_codes](https://developers.tiktok.com/doc/research-api-specs-query-videos).
