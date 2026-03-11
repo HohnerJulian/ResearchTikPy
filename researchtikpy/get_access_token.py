@@ -37,15 +37,14 @@ def get_access_token(client_key, client_secret):
 
     response = requests.post(endpoint_url, headers=headers, data=data)
 
-    if response.status_code == 200:
-        response_json = response.json()
-        return {
-            "access_token": response_json['access_token'],
-            "expires_in": response_json['expires_in'],
-            "token_type": response_json['token_type']
-        }
-    else:
-        raise Exception(f"Failed to obtain access token: {response.text}")
+    response_json = response.json()
+    if response.status_code != 200 or "access_token" not in response_json:
+        raise Exception(f"Failed to obtain access token: {response_json}")
+    return {
+        "access_token": response_json['access_token'],
+        "expires_in": response_json['expires_in'],
+        "token_type": response_json['token_type']
+    }
 
 
 @ttl_cache(ttl=7200 - 1)  # to be safe
